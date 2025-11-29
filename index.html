@@ -556,7 +556,8 @@
             text-align: center;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            height: 280px;
+            height: auto;
+            min-height: 280px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -578,6 +579,10 @@
             font-weight: 700;
             margin-bottom: 15px;
             color: #ffd700;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            line-height: 1.2;
         }
 
         .receita-label {
@@ -749,6 +754,10 @@
             
             .action-buttons {
                 flex-direction: column;
+            }
+            
+            .receita-value {
+                font-size: 2.2rem;
             }
         }
     </style>
@@ -2339,11 +2348,37 @@
             return totais;
         }
 
-        window.zerarReceita = function() {
-            if (confirm('ATENÇÃO: Esta ação NÃO apaga os dados do Firebase. Ela apenas reinicia a contagem visual na aba Receita. Todos os seus registros históricos continuarão disponíveis nos relatórios. Deseja continuar?')) {
-                alert('Contagem de receita zerada com sucesso! Lembre-se que todos os seus dados históricos continuam salvos no sistema.');
-                // Em uma implementação real, aqui você criaria um marcador de "reset" no banco de dados
-                // Para simplificar, apenas mostramos um alerta mais detalhado
+        window.zerarReceita = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para zerar a contagem.");
+                return;
+            }
+            
+            if (confirm('ATENÇÃO: Esta ação apagará TODOS os seus registros de arbitragens (esportivas, wingo e roleta) permanentemente. Esta ação não pode ser desfeita. Deseja continuar?')) {
+                try {
+                    // Apagar todas as coleções do usuário
+                    const collections = ['esportivas', 'wingo', 'roleta'];
+                    
+                    for (const colName of collections) {
+                        const querySnapshot = await getDocs(collection(db, 'users', currentUser.uid, colName));
+                        const batch = [];
+                        
+                        querySnapshot.forEach(doc => {
+                            batch.push(deleteDoc(doc.ref));
+                        });
+                        
+                        await Promise.all(batch);
+                    }
+                    
+                    // Recarregar os dados
+                    carregarReceita();
+                    carregarDashboard();
+                    
+                    alert('Todos os registros foram apagados com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao zerar contagem:", error);
+                    alert("Erro ao zerar contagem: " + error.message);
+                }
             }
         }
 
