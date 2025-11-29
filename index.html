@@ -366,6 +366,12 @@
             color: #ff9800;
         }
 
+        .btn-success {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            color: #4caf50;
+        }
+
         .btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
@@ -384,6 +390,11 @@
         .btn-warning:hover {
             background: rgba(255, 152, 0, 0.3);
             border-color: #ff9800;
+        }
+
+        .btn-success:hover {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
         }
 
         .table-container {
@@ -529,10 +540,10 @@
             font-size: 1rem;
         }
 
-        /* Layout da Receita - 2 cards lado a lado */
+        /* Layout da Receita - cards em grid */
         .receita-overview {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -581,6 +592,7 @@
             gap: 20px;
             justify-content: center;
             margin-top: 25px;
+            flex-wrap: wrap;
         }
 
         .warning-message {
@@ -592,6 +604,64 @@
             color: #ff9800;
             font-weight: 500;
             text-align: center;
+        }
+
+        .info-message {
+            background: rgba(33, 150, 243, 0.2);
+            border: 1px solid rgba(33, 150, 243, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #2196f3;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .investment-section {
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .investment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .investment-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .investment-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .investment-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4caf50;
+        }
+
+        .roi-display {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.5);
+            border-radius: 10px;
+            padding: 10px 20px;
+            color: #4caf50;
+            font-weight: 600;
         }
 
         @media (max-width: 1400px) {
@@ -675,6 +745,10 @@
             .overview-card, .receita-card {
                 height: auto;
                 padding: 25px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
             }
         }
     </style>
@@ -1168,13 +1242,49 @@
                     </div>
                 </div>
                 
+                <!-- Seção de Investimento -->
+                <div class="investment-section">
+                    <div class="investment-header">
+                        <div class="investment-title">
+                            <i class="fas fa-piggy-bank"></i>
+                            Controle de Investimento
+                        </div>
+                    </div>
+                    
+                    <div class="info-message">
+                        <i class="fas fa-info-circle"></i> 
+                        Registre seu capital inicial para acompanhar a evolução do seu investimento e calcular o ROI (Retorno sobre Investimento).
+                    </div>
+                    
+                    <div class="investment-display">
+                        <div>
+                            <div class="result-label">Investimento Atual:</div>
+                            <div class="investment-value" id="investimento-atual">R$ 0,00</div>
+                        </div>
+                        <div class="roi-display" id="roi-display">ROI: 0%</div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="investimento-valor">Valor do Investimento</label>
+                            <input type="number" id="investimento-valor" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-success" onclick="salvarInvestimento()">
+                                <i class="fas fa-save"></i> Salvar Investimento
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
                 <div class="card">
                     <div class="warning-message">
                         <i class="fas fa-info-circle"></i> 
                         Esta aba mostra o lucro e movimentação geral desde o início. Os valores são calculados em tempo real com base em todos os registros salvos.
                     </div>
                     
-                    <!-- 2 cards lado a lado -->
+                    <!-- Cards em grid responsivo -->
                     <div class="receita-overview">
                         <div class="receita-card">
                             <div class="receita-icon">
@@ -1190,6 +1300,14 @@
                             </div>
                             <div class="receita-value" id="receita-total-movimentado">R$ 0,00</div>
                             <div class="receita-label">Total Movimentado</div>
+                        </div>
+                        
+                        <div class="receita-card">
+                            <div class="receita-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="receita-value" id="receita-saldo-total">R$ 0,00</div>
+                            <div class="receita-label">Saldo Total</div>
                         </div>
                     </div>
                     
@@ -1296,7 +1414,7 @@
         // Import the functions you need from the SDKs you need
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, deleteDoc, doc, serverTimestamp, updateDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         // Your web app's Firebase configuration
         const firebaseConfig = {
@@ -1317,6 +1435,16 @@
         // Variável global para o usuário atual
         let currentUser = null;
         let arbitragemChart = null;
+
+        // Função para formatar valores monetários
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(valor);
+        }
 
         // Funções de Autenticação
         window.loginWithGoogle = function() {
@@ -1375,6 +1503,7 @@
                 carregarRoleta();
             } else if (sectionId === 'receita') {
                 carregarReceita();
+                carregarInvestimento();
             }
         }
 
@@ -1445,11 +1574,11 @@
                 // Carregar totais do mês atual
                 const totais = await calcularTotaisMesAtual();
                 
-                document.getElementById('total-esportivas').textContent = `R$ ${totais.esportivas.toFixed(2)}`;
-                document.getElementById('total-wingo').textContent = `R$ ${totais.wingo.toFixed(2)}`;
-                document.getElementById('total-roleta').textContent = `R$ ${totais.roleta.toFixed(2)}`;
-                document.getElementById('total-geral').textContent = `R$ ${totais.total.toFixed(2)}`;
-                document.getElementById('total-movimentado').textContent = `R$ ${totais.movimentado.toFixed(2)}`;
+                document.getElementById('total-esportivas').textContent = formatarMoeda(totais.esportivas);
+                document.getElementById('total-wingo').textContent = formatarMoeda(totais.wingo);
+                document.getElementById('total-roleta').textContent = formatarMoeda(totais.roleta);
+                document.getElementById('total-geral').textContent = formatarMoeda(totais.total);
+                document.getElementById('total-movimentado').textContent = formatarMoeda(totais.movimentado);
                 
                 // Atualizar gráfico
                 atualizarGrafico(totais);
@@ -1560,7 +1689,7 @@
                                 label: function(context) {
                                     const label = context.label || '';
                                     const value = context.raw || 0;
-                                    return `${label}: R$ ${value.toFixed(2)}`;
+                                    return `${label}: ${formatarMoeda(value)}`;
                                 }
                             }
                         }
@@ -1666,10 +1795,10 @@
                         row.innerHTML = `
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                             <td>
                                 <button class="btn btn-danger" onclick="excluirEsportiva('${doc.id}')">
@@ -1681,7 +1810,7 @@
                     });
                 }
                 
-                document.getElementById('esportivas-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+                document.getElementById('esportivas-total-lucros').textContent = formatarMoeda(totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar esportivas:", error);
             }
@@ -1831,10 +1960,10 @@
                         row.innerHTML = `
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                             <td>
                                 <button class="btn btn-danger" onclick="excluirWingo('${doc.id}')">
@@ -1846,7 +1975,7 @@
                     });
                 }
                 
-                document.getElementById('wingo-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+                document.getElementById('wingo-total-lucros').textContent = formatarMoeda(totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar wingo:", error);
             }
@@ -1996,10 +2125,10 @@
                         row.innerHTML = `
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                             <td>
                                 <button class="btn btn-danger" onclick="excluirRoleta('${doc.id}')">
@@ -2011,7 +2140,7 @@
                     });
                 }
                 
-                document.getElementById('roleta-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+                document.getElementById('roleta-total-lucros').textContent = formatarMoeda(totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar roleta:", error);
             }
@@ -2064,6 +2193,80 @@
             }
         }
 
+        // Funções para Investimento
+        window.salvarInvestimento = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para salvar o investimento.");
+                return;
+            }
+            
+            const valor = parseFloat(document.getElementById('investimento-valor').value.replace(',', '.')) || 0;
+            
+            if (valor <= 0) {
+                alert('Por favor, informe um valor de investimento válido.');
+                return;
+            }
+            
+            try {
+                const investimentoRef = doc(db, 'users', currentUser.uid, 'investimento', 'principal');
+                
+                // Verificar se já existe um investimento salvo
+                const investimentoDoc = await getDoc(investimentoRef);
+                
+                if (investimentoDoc.exists()) {
+                    // Atualizar investimento existente
+                    await updateDoc(investimentoRef, {
+                        valor: valor,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    // Criar novo investimento
+                    await setDoc(investimentoRef, {
+                        valor: valor,
+                        createdAt: serverTimestamp(),
+                        updatedAt: serverTimestamp()
+                    });
+                }
+                
+                // Limpar campo
+                document.getElementById('investimento-valor').value = '';
+                
+                // Recarregar dados
+                carregarInvestimento();
+                carregarReceita();
+                
+                alert('Investimento salvo com sucesso!');
+            } catch (error) {
+                console.error("Erro ao salvar investimento:", error);
+                alert("Erro ao salvar investimento: " + error.message);
+            }
+        }
+
+        async function carregarInvestimento() {
+            if (!currentUser) return;
+            
+            try {
+                const investimentoRef = doc(db, 'users', currentUser.uid, 'investimento', 'principal');
+                const investimentoDoc = await getDoc(investimentoRef);
+                
+                let investimentoValor = 0;
+                
+                if (investimentoDoc.exists()) {
+                    investimentoValor = investimentoDoc.data().valor;
+                }
+                
+                document.getElementById('investimento-atual').textContent = formatarMoeda(investimentoValor);
+                
+                // Calcular ROI
+                const totais = await calcularTotaisGerais();
+                const roi = investimentoValor > 0 ? ((totais.totalLucro / investimentoValor) * 100) : 0;
+                document.getElementById('roi-display').textContent = `ROI: ${roi.toFixed(2)}%`;
+                
+            } catch (error) {
+                console.error("Erro ao carregar investimento:", error);
+            }
+        }
+
         // Funções para Receita
         async function carregarReceita() {
             if (!currentUser) return;
@@ -2071,8 +2274,21 @@
             try {
                 const totais = await calcularTotaisGerais();
                 
-                document.getElementById('receita-total-lucro').textContent = `R$ ${totais.totalLucro.toFixed(2)}`;
-                document.getElementById('receita-total-movimentado').textContent = `R$ ${totais.totalMovimentado.toFixed(2)}`;
+                document.getElementById('receita-total-lucro').textContent = formatarMoeda(totais.totalLucro);
+                document.getElementById('receita-total-movimentado').textContent = formatarMoeda(totais.totalMovimentado);
+                
+                // Calcular saldo total (investimento + lucro)
+                const investimentoRef = doc(db, 'users', currentUser.uid, 'investimento', 'principal');
+                const investimentoDoc = await getDoc(investimentoRef);
+                let investimentoValor = 0;
+                
+                if (investimentoDoc.exists()) {
+                    investimentoValor = investimentoDoc.data().valor;
+                }
+                
+                const saldoTotal = investimentoValor + totais.totalLucro;
+                document.getElementById('receita-saldo-total').textContent = formatarMoeda(saldoTotal);
+                
             } catch (error) {
                 console.error("Erro ao carregar receita:", error);
             }
@@ -2196,10 +2412,10 @@
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>Esportivas</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                         `;
                         tableBody.appendChild(row);
@@ -2229,10 +2445,10 @@
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>Wingo</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                         `;
                         tableBody.appendChild(row);
@@ -2262,10 +2478,10 @@
                             <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
                             <td>Roleta</td>
                             <td>${data.casa1}</td>
-                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
-                            <td>R$ ${data.investimento2.toFixed(2)}</td>
-                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${formatarMoeda(data.investimento2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">${formatarMoeda(data.lucro)}</td>
                             <td>${retornoTotal.toFixed(2)}%</td>
                         `;
                         tableBody.appendChild(row);
@@ -2277,8 +2493,8 @@
                 }
                 
                 // Atualizar totais
-                document.getElementById('relatorio-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
-                document.getElementById('relatorio-total-movimentado').textContent = `R$ ${totalMovimentado.toFixed(2)}`;
+                document.getElementById('relatorio-total-lucros').textContent = formatarMoeda(totalLucros);
+                document.getElementById('relatorio-total-movimentado').textContent = formatarMoeda(totalMovimentado);
                 document.getElementById('relatorio-retorno-medio').textContent = count > 0 ? `${(totalRetorno / count).toFixed(2)}%` : '0%';
             } catch (error) {
                 console.error("Erro ao gerar relatório:", error);
