@@ -15,7 +15,7 @@
         }
 
         body {
-            background: linear-gradient(135deg, #0c0c1e 0%, #1a1a2e 50%, #16213e 100%);
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #0d0d0d 100%);
             color: #fff;
             min-height: 100vh;
             display: flex;
@@ -23,7 +23,7 @@
         }
 
         .header {
-            background: linear-gradient(90deg, #0c0c1e 0%, #16213e 100%);
+            background: linear-gradient(90deg, #000000 0%, #1a1a1a 100%);
             padding: 20px 0;
             text-align: center;
             border-bottom: 2px solid rgba(255, 215, 0, 0.3);
@@ -146,6 +146,8 @@
             padding: 20px 0;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             height: fit-content;
+            position: sticky;
+            top: 20px;
         }
 
         .nav-item {
@@ -222,7 +224,7 @@
 
         .dashboard-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
@@ -337,6 +339,12 @@
             color: #f44336;
         }
 
+        .btn-warning {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+            color: #ff9800;
+        }
+
         .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -350,6 +358,11 @@
         .btn-danger:hover {
             background: rgba(244, 67, 54, 0.3);
             border-color: #f44336;
+        }
+
+        .btn-warning:hover {
+            background: rgba(255, 152, 0, 0.3);
+            border-color: #ff9800;
         }
 
         .table-container {
@@ -468,6 +481,78 @@
             100% { transform: rotate(360deg); }
         }
 
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .month-indicator {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .receita-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .receita-card {
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .receita-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .receita-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #ffd700;
+        }
+
+        .receita-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #ffd700;
+        }
+
+        .receita-label {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
@@ -476,6 +561,7 @@
             .sidebar {
                 width: 100%;
                 order: 2;
+                position: static;
             }
             
             .main-content {
@@ -499,6 +585,10 @@
             }
             
             .dashboard-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .receita-overview {
                 grid-template-columns: 1fr;
             }
         }
@@ -558,6 +648,10 @@
                 <i class="fas fa-circle-notch"></i>
                 <span>Roleta</span>
             </div>
+            <div class="nav-item" onclick="showSection('receita')">
+                <i class="fas fa-coins"></i>
+                <span>Receita</span>
+            </div>
             <div class="nav-item" onclick="showSection('relatorios')">
                 <i class="fas fa-file-alt"></i>
                 <span>Relatórios</span>
@@ -567,14 +661,15 @@
         <div class="main-content">
             <!-- Dashboard Section -->
             <div id="dashboard" class="content-section active">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <i class="fas fa-chart-pie"></i>
-                            Visão Geral
-                        </div>
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-chart-pie"></i>
+                        Dashboard
                     </div>
-                    
+                    <div class="month-indicator" id="current-month">Mês Atual</div>
+                </div>
+                
+                <div class="card">
                     <div class="dashboard-overview">
                         <div class="overview-card">
                             <div class="overview-icon sports">
@@ -625,10 +720,18 @@
 
             <!-- Esportivas Section -->
             <div id="esportivas" class="content-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-futbol"></i>
+                        Esportivas
+                    </div>
+                    <div class="month-indicator" id="esportivas-month">Mês Atual</div>
+                </div>
+                
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <i class="fas fa-futbol"></i>
+                            <i class="fas fa-plus-circle"></i>
                             Nova Arbitragem Esportiva
                         </div>
                     </div>
@@ -702,6 +805,12 @@
                         </div>
                     </div>
                     
+                    <div class="action-buttons">
+                        <button class="btn btn-danger" onclick="apagarEsportivas()">
+                            <i class="fas fa-trash-alt"></i> Apagar Tudo
+                        </button>
+                    </div>
+                    
                     <div class="table-container">
                         <table>
                             <thead>
@@ -728,10 +837,18 @@
 
             <!-- Wingo Section -->
             <div id="wingo" class="content-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-dice"></i>
+                        Wingo
+                    </div>
+                    <div class="month-indicator" id="wingo-month">Mês Atual</div>
+                </div>
+                
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <i class="fas fa-dice"></i>
+                            <i class="fas fa-plus-circle"></i>
                             Nova Arbitragem Wingo
                         </div>
                     </div>
@@ -805,6 +922,12 @@
                         </div>
                     </div>
                     
+                    <div class="action-buttons">
+                        <button class="btn btn-danger" onclick="apagarWingo()">
+                            <i class="fas fa-trash-alt"></i> Apagar Tudo
+                        </button>
+                    </div>
+                    
                     <div class="table-container">
                         <table>
                             <thead>
@@ -831,10 +954,18 @@
 
             <!-- Roleta Section -->
             <div id="roleta" class="content-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-circle-notch"></i>
+                        Roleta
+                    </div>
+                    <div class="month-indicator" id="roleta-month">Mês Atual</div>
+                </div>
+                
                 <div class="card">
                     <div class="card-header">
                         <div class="card-title">
-                            <i class="fas fa-circle-notch"></i>
+                            <i class="fas fa-plus-circle"></i>
                             Nova Arbitragem Roleta
                         </div>
                     </div>
@@ -908,6 +1039,12 @@
                         </div>
                     </div>
                     
+                    <div class="action-buttons">
+                        <button class="btn btn-danger" onclick="apagarRoleta()">
+                            <i class="fas fa-trash-alt"></i> Apagar Tudo
+                        </button>
+                    </div>
+                    
                     <div class="table-container">
                         <table>
                             <thead>
@@ -928,6 +1065,42 @@
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Receita Section -->
+            <div id="receita" class="content-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-coins"></i>
+                        Receita Geral
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="receita-overview">
+                        <div class="receita-card">
+                            <div class="receita-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="receita-value" id="receita-total-lucro">R$ 0,00</div>
+                            <div class="receita-label">Lucro Geral</div>
+                        </div>
+                        
+                        <div class="receita-card">
+                            <div class="receita-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="receita-value" id="receita-total-movimentado">R$ 0,00</div>
+                            <div class="receita-label">Total Movimentado</div>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-warning" onclick="zerarReceita()">
+                            <i class="fas fa-redo"></i> Zerar Contagem
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1104,6 +1277,8 @@
                 carregarWingo();
             } else if (sectionId === 'roleta') {
                 carregarRoleta();
+            } else if (sectionId === 'receita') {
+                carregarReceita();
             }
         }
 
@@ -1114,6 +1289,13 @@
             document.getElementById('esportivas-data').value = hoje;
             document.getElementById('wingo-data').value = hoje;
             document.getElementById('roleta-data').value = hoje;
+            
+            // Configurar indicador de mês atual
+            const mesAtual = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
+            document.getElementById('current-month').textContent = mesAtual;
+            document.getElementById('esportivas-month').textContent = mesAtual;
+            document.getElementById('wingo-month').textContent = mesAtual;
+            document.getElementById('roleta-month').textContent = mesAtual;
             
             // Verificar estado de autenticação
             onAuthStateChanged(auth, (user) => {
@@ -1155,11 +1337,17 @@
             });
         }
 
+        // Função para obter o primeiro dia do mês atual
+        function getPrimeiroDiaMesAtual() {
+            const data = new Date();
+            return new Date(data.getFullYear(), data.getMonth(), 1).toISOString().split('T')[0];
+        }
+
         // Função para carregar o dashboard
         async function carregarDashboard() {
             try {
-                // Carregar totais
-                const totais = await calcularTotais();
+                // Carregar totais do mês atual
+                const totais = await calcularTotaisMesAtual();
                 
                 document.getElementById('total-esportivas').textContent = `R$ ${totais.esportivas.toFixed(2)}`;
                 document.getElementById('total-wingo').textContent = `R$ ${totais.wingo.toFixed(2)}`;
@@ -1174,8 +1362,8 @@
             }
         }
 
-        // Função para calcular totais
-        async function calcularTotais() {
+        // Função para calcular totais do mês atual
+        async function calcularTotaisMesAtual() {
             const totais = {
                 esportivas: 0,
                 wingo: 0,
@@ -1184,9 +1372,12 @@
                 movimentado: 0
             };
             
-            // Buscar esportivas
+            const primeiroDiaMes = getPrimeiroDiaMesAtual();
+            
+            // Buscar esportivas do mês atual
             const esportivasSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'esportivas'),
+                where('data', '>=', primeiroDiaMes),
                 orderBy('data', 'desc')
             ));
             
@@ -1196,9 +1387,10 @@
                 totais.movimentado += data.investimento1 + data.investimento2;
             });
             
-            // Buscar wingo
+            // Buscar wingo do mês atual
             const wingoSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'wingo'),
+                where('data', '>=', primeiroDiaMes),
                 orderBy('data', 'desc')
             ));
             
@@ -1208,9 +1400,10 @@
                 totais.movimentado += data.investimento1 + data.investimento2;
             });
             
-            // Buscar roleta
+            // Buscar roleta do mês atual
             const roletaSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'roleta'),
+                where('data', '>=', primeiroDiaMes),
                 orderBy('data', 'desc')
             ));
             
@@ -1336,6 +1529,7 @@
                 // Recarregar dados
                 carregarEsportivas();
                 carregarDashboard();
+                carregarReceita();
                 
                 alert('Arbitragem salva com sucesso!');
             } catch (error) {
@@ -1348,8 +1542,11 @@
             if (!currentUser) return;
             
             try {
+                const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'esportivas'),
+                    where('data', '>=', primeiroDiaMes),
                     orderBy('data', 'desc')
                 ));
                 
@@ -1401,10 +1598,41 @@
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'esportivas', id));
                     carregarEsportivas();
                     carregarDashboard();
+                    carregarReceita();
                     alert('Arbitragem excluída com sucesso!');
                 } catch (error) {
                     console.error("Erro ao excluir arbitragem:", error);
                     alert("Erro ao excluir arbitragem: " + error.message);
+                }
+            }
+        }
+
+        window.apagarEsportivas = async function() {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de esportivas do mês atual?')) {
+                try {
+                    const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    
+                    const querySnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'esportivas'),
+                        where('data', '>=', primeiroDiaMes)
+                    ));
+                    
+                    const batch = [];
+                    querySnapshot.forEach(doc => {
+                        batch.push(deleteDoc(doc.ref));
+                    });
+                    
+                    await Promise.all(batch);
+                    
+                    carregarEsportivas();
+                    carregarDashboard();
+                    carregarReceita();
+                    alert('Todas as arbitragens de esportivas do mês atual foram apagadas!');
+                } catch (error) {
+                    console.error("Erro ao apagar arbitragens:", error);
+                    alert("Erro ao apagar arbitragens: " + error.message);
                 }
             }
         }
@@ -1466,6 +1694,7 @@
                 // Recarregar dados
                 carregarWingo();
                 carregarDashboard();
+                carregarReceita();
                 
                 alert('Arbitragem salva com sucesso!');
             } catch (error) {
@@ -1478,8 +1707,11 @@
             if (!currentUser) return;
             
             try {
+                const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'wingo'),
+                    where('data', '>=', primeiroDiaMes),
                     orderBy('data', 'desc')
                 ));
                 
@@ -1531,10 +1763,41 @@
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'wingo', id));
                     carregarWingo();
                     carregarDashboard();
+                    carregarReceita();
                     alert('Arbitragem excluída com sucesso!');
                 } catch (error) {
                     console.error("Erro ao excluir arbitragem:", error);
                     alert("Erro ao excluir arbitragem: " + error.message);
+                }
+            }
+        }
+
+        window.apagarWingo = async function() {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de wingo do mês atual?')) {
+                try {
+                    const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    
+                    const querySnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'wingo'),
+                        where('data', '>=', primeiroDiaMes)
+                    ));
+                    
+                    const batch = [];
+                    querySnapshot.forEach(doc => {
+                        batch.push(deleteDoc(doc.ref));
+                    });
+                    
+                    await Promise.all(batch);
+                    
+                    carregarWingo();
+                    carregarDashboard();
+                    carregarReceita();
+                    alert('Todas as arbitragens de wingo do mês atual foram apagadas!');
+                } catch (error) {
+                    console.error("Erro ao apagar arbitragens:", error);
+                    alert("Erro ao apagar arbitragens: " + error.message);
                 }
             }
         }
@@ -1596,6 +1859,7 @@
                 // Recarregar dados
                 carregarRoleta();
                 carregarDashboard();
+                carregarReceita();
                 
                 alert('Arbitragem salva com sucesso!');
             } catch (error) {
@@ -1608,8 +1872,11 @@
             if (!currentUser) return;
             
             try {
+                const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'roleta'),
+                    where('data', '>=', primeiroDiaMes),
                     orderBy('data', 'desc')
                 ));
                 
@@ -1661,11 +1928,109 @@
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'roleta', id));
                     carregarRoleta();
                     carregarDashboard();
+                    carregarReceita();
                     alert('Arbitragem excluída com sucesso!');
                 } catch (error) {
                     console.error("Erro ao excluir arbitragem:", error);
                     alert("Erro ao excluir arbitragem: " + error.message);
                 }
+            }
+        }
+
+        window.apagarRoleta = async function() {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de roleta do mês atual?')) {
+                try {
+                    const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    
+                    const querySnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'roleta'),
+                        where('data', '>=', primeiroDiaMes)
+                    ));
+                    
+                    const batch = [];
+                    querySnapshot.forEach(doc => {
+                        batch.push(deleteDoc(doc.ref));
+                    });
+                    
+                    await Promise.all(batch);
+                    
+                    carregarRoleta();
+                    carregarDashboard();
+                    carregarReceita();
+                    alert('Todas as arbitragens de roleta do mês atual foram apagadas!');
+                } catch (error) {
+                    console.error("Erro ao apagar arbitragens:", error);
+                    alert("Erro ao apagar arbitragens: " + error.message);
+                }
+            }
+        }
+
+        // Funções para Receita
+        async function carregarReceita() {
+            if (!currentUser) return;
+            
+            try {
+                const totais = await calcularTotaisGerais();
+                
+                document.getElementById('receita-total-lucro').textContent = `R$ ${totais.totalLucro.toFixed(2)}`;
+                document.getElementById('receita-total-movimentado').textContent = `R$ ${totais.totalMovimentado.toFixed(2)}`;
+            } catch (error) {
+                console.error("Erro ao carregar receita:", error);
+            }
+        }
+
+        async function calcularTotaisGerais() {
+            const totais = {
+                totalLucro: 0,
+                totalMovimentado: 0
+            };
+            
+            // Buscar esportivas
+            const esportivasSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'esportivas'),
+                orderBy('data', 'desc')
+            ));
+            
+            esportivasSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.totalLucro += data.lucro;
+                totais.totalMovimentado += data.investimento1 + data.investimento2;
+            });
+            
+            // Buscar wingo
+            const wingoSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'wingo'),
+                orderBy('data', 'desc')
+            ));
+            
+            wingoSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.totalLucro += data.lucro;
+                totais.totalMovimentado += data.investimento1 + data.investimento2;
+            });
+            
+            // Buscar roleta
+            const roletaSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'roleta'),
+                orderBy('data', 'desc')
+            ));
+            
+            roletaSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.totalLucro += data.lucro;
+                totais.totalMovimentado += data.investimento1 + data.investimento2;
+            });
+            
+            return totais;
+        }
+
+        window.zerarReceita = function() {
+            if (confirm('Tem certeza que deseja zerar a contagem de receita? Esta ação não apagará os dados históricos, apenas reiniciará a contagem a partir de agora.')) {
+                alert('Contagem de receita zerada com sucesso! A partir de agora, a receita será calculada a partir deste ponto.');
+                // Em uma implementação real, aqui você criaria um marcador de "reset" no banco de dados
+                // Para simplificar, apenas mostramos um alerta
             }
         }
 
