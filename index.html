@@ -1,0 +1,1833 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Império Dubai Squad - Gerenciador de Arbitragens</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c1e 0%, #1a1a2e 50%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #0c0c1e 0%, #16213e 100%);
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .brand-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            font-size: 3rem;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .brand-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #ffd700, #ffed4e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+            letter-spacing: 2px;
+        }
+
+        .brand-subtitle {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            letter-spacing: 3px;
+            font-weight: 600;
+        }
+
+        .header-decoration {
+            height: 4px;
+            width: 60%;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        .user-section {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(22, 33, 62, 0.7);
+            padding: 8px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+        }
+
+        .user-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffd700;
+        }
+
+        .user-name {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .login-btn, .logout-btn {
+            padding: 8px 15px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background: linear-gradient(90deg, #4285f4, #34a853);
+            color: white;
+        }
+
+        .logout-btn {
+            background: rgba(244, 67, 54, 0.2);
+            color: #f44336;
+            border: 1px solid rgba(244, 67, 54, 0.5);
+        }
+
+        .login-btn:hover, .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .container {
+            display: flex;
+            flex: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+        }
+
+        .nav-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+            border-left: 3px solid #ffd700;
+        }
+
+        .nav-item.active {
+            background: rgba(255, 215, 0, 0.2);
+            border-left: 3px solid #ffd700;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            color: #ffd700;
+        }
+
+        .nav-item span {
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-section {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .content-section.active {
+            display: flex;
+        }
+
+        .card {
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffd700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dashboard-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .overview-card {
+            background: rgba(22, 33, 62, 0.7);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .overview-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .overview-icon.sports {
+            color: #ffd700;
+        }
+
+        .overview-icon.wingo {
+            color: #4caf50;
+        }
+
+        .overview-icon.roulette {
+            color: #f44336;
+        }
+
+        .overview-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .overview-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            position: relative;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            font-weight: 600;
+        }
+
+        .form-control {
+            padding: 12px 15px;
+            background: rgba(30, 30, 30, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ffd700;
+            box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #0c0c1e, #16213e);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            color: #fff;
+        }
+
+        .btn-danger {
+            background: rgba(244, 67, 54, 0.2);
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            color: #f44336;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #16213e, #0c0c1e);
+            border-color: #ffd700;
+        }
+
+        .btn-danger:hover {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(22, 33, 62, 0.5);
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .profit {
+            color: #4caf50;
+            font-weight: 700;
+        }
+
+        .loss {
+            color: #f44336;
+            font-weight: 700;
+        }
+
+        .filter-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .filter-group label {
+            font-size: 0.9rem;
+            color: #a0a0a0;
+            font-weight: 600;
+        }
+
+        .login-required {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            text-align: center;
+            color: #a0a0a0;
+        }
+
+        .login-required i {
+            font-size: 4rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+
+        .login-required h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .login-required p {
+            max-width: 500px;
+            line-height: 1.6;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-label {
+            color: #a0a0a0;
+        }
+
+        .result-value {
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+        }
+
+        .loading i {
+            font-size: 3rem;
+            color: #ffd700;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .user-section {
+                position: static;
+                justify-content: center;
+                margin-bottom: 20px;
+            }
+            
+            .brand-title {
+                font-size: 2rem;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="user-section" id="user-section">
+            <div id="user-info" class="user-info" style="display: none;">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-name" id="user-name">Carregando...</div>
+            </div>
+            <button id="login-btn" class="login-btn" onclick="loginWithGoogle()">
+                <i class="fab fa-google"></i> Entrar
+            </button>
+            <button id="logout-btn" class="logout-btn" onclick="logout()" style="display: none;">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
+        
+        <div class="brand-container">
+            <div class="brand-icon">
+                <i class="fas fa-crown"></i>
+            </div>
+            <h1 class="brand-title">IMPÉRIO DUBAI SQUAD</h1>
+            <div class="brand-subtitle">GERENCIADOR DE ARBITRAGENS</div>
+        </div>
+        <div class="header-decoration"></div>
+    </div>
+
+    <div id="login-required" class="login-required">
+        <i class="fas fa-lock"></i>
+        <h2>Acesso Restrito</h2>
+        <p>Faça login com sua conta Google para acessar o sistema de gerenciamento de arbitragens do Império Dubai Squad.</p>
+        <button class="btn btn-primary" onclick="loginWithGoogle()" style="margin-top: 20px;">
+            <i class="fab fa-google"></i> Entrar com Google
+        </button>
+    </div>
+
+    <div id="app-container" class="container" style="display: none;">
+        <div class="sidebar">
+            <div class="nav-item active" onclick="showSection('dashboard')">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="showSection('esportivas')">
+                <i class="fas fa-futbol"></i>
+                <span>Esportivas</span>
+            </div>
+            <div class="nav-item" onclick="showSection('wingo')">
+                <i class="fas fa-dice"></i>
+                <span>Wingo</span>
+            </div>
+            <div class="nav-item" onclick="showSection('roleta')">
+                <i class="fas fa-circle-notch"></i>
+                <span>Roleta</span>
+            </div>
+            <div class="nav-item" onclick="showSection('relatorios')">
+                <i class="fas fa-file-alt"></i>
+                <span>Relatórios</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Visão Geral
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-overview">
+                        <div class="overview-card">
+                            <div class="overview-icon sports">
+                                <i class="fas fa-futbol"></i>
+                            </div>
+                            <div class="overview-value" id="total-esportivas">R$ 0,00</div>
+                            <div class="overview-label">Lucro Esportivas</div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon wingo">
+                                <i class="fas fa-dice"></i>
+                            </div>
+                            <div class="overview-value" id="total-wingo">R$ 0,00</div>
+                            <div class="overview-label">Lucro Wingo</div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon roulette">
+                                <i class="fas fa-circle-notch"></i>
+                            </div>
+                            <div class="overview-value" id="total-roleta">R$ 0,00</div>
+                            <div class="overview-label">Lucro Roleta</div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon">
+                                <i class="fas fa-wallet"></i>
+                            </div>
+                            <div class="overview-value" id="total-geral">R$ 0,00</div>
+                            <div class="overview-label">Lucro Total</div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="overview-value" id="total-movimentado">R$ 0,00</div>
+                            <div class="overview-label">Total Movimentado</div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <canvas id="arbitragem-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Esportivas Section -->
+            <div id="esportivas" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-futbol"></i>
+                            Nova Arbitragem Esportiva
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="esportivas-data">Data</label>
+                            <input type="date" id="esportivas-data" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="esportivas-casa1">Casa 1</label>
+                            <input type="text" id="esportivas-casa1" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="esportivas-investimento1">Investimento Casa 1</label>
+                            <input type="number" id="esportivas-investimento1" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="esportivas-casa2">Casa 2</label>
+                            <input type="text" id="esportivas-casa2" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="esportivas-investimento2">Investimento Casa 2</label>
+                            <input type="number" id="esportivas-investimento2" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="esportivas-lucro">Lucro</label>
+                            <input type="number" id="esportivas-lucro" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 1:</span>
+                        <span class="result-value" id="esportivas-retorno1">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 2:</span>
+                        <span class="result-value" id="esportivas-retorno2">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Total:</span>
+                        <span class="result-value" id="esportivas-retorno-total">0%</span>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn btn-primary" onclick="calcularRetornoEsportivas()">
+                            <i class="fas fa-calculator"></i> Calcular Retorno
+                        </button>
+                        <button class="btn btn-primary" onclick="salvarEsportivas()">
+                            <i class="fas fa-save"></i> Salvar Arbitragem
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-list"></i>
+                            Histórico de Esportivas
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="result-label">Total Lucros:</div>
+                            <div class="result-value" id="esportivas-total-lucros">R$ 0,00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Casa 1</th>
+                                    <th>Investimento 1</th>
+                                    <th>Casa 2</th>
+                                    <th>Investimento 2</th>
+                                    <th>Lucro</th>
+                                    <th>Retorno</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="esportivas-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wingo Section -->
+            <div id="wingo" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-dice"></i>
+                            Nova Arbitragem Wingo
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="wingo-data">Data</label>
+                            <input type="date" id="wingo-data" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="wingo-casa1">Casa 1</label>
+                            <input type="text" id="wingo-casa1" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="wingo-investimento1">Investimento Casa 1</label>
+                            <input type="number" id="wingo-investimento1" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="wingo-casa2">Casa 2</label>
+                            <input type="text" id="wingo-casa2" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="wingo-investimento2">Investimento Casa 2</label>
+                            <input type="number" id="wingo-investimento2" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="wingo-lucro">Lucro</label>
+                            <input type="number" id="wingo-lucro" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 1:</span>
+                        <span class="result-value" id="wingo-retorno1">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 2:</span>
+                        <span class="result-value" id="wingo-retorno2">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Total:</span>
+                        <span class="result-value" id="wingo-retorno-total">0%</span>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn btn-primary" onclick="calcularRetornoWingo()">
+                            <i class="fas fa-calculator"></i> Calcular Retorno
+                        </button>
+                        <button class="btn btn-primary" onclick="salvarWingo()">
+                            <i class="fas fa-save"></i> Salvar Arbitragem
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-list"></i>
+                            Histórico de Wingo
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="result-label">Total Lucros:</div>
+                            <div class="result-value" id="wingo-total-lucros">R$ 0,00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Casa 1</th>
+                                    <th>Investimento 1</th>
+                                    <th>Casa 2</th>
+                                    <th>Investimento 2</th>
+                                    <th>Lucro</th>
+                                    <th>Retorno</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="wingo-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roleta Section -->
+            <div id="roleta" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-circle-notch"></i>
+                            Nova Arbitragem Roleta
+                        </div>
+                    </div>
+                    
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="roleta-data">Data</label>
+                            <input type="date" id="roleta-data" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roleta-casa1">Casa 1</label>
+                            <input type="text" id="roleta-casa1" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roleta-investimento1">Investimento Casa 1</label>
+                            <input type="number" id="roleta-investimento1" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roleta-casa2">Casa 2</label>
+                            <input type="text" id="roleta-casa2" class="form-control" placeholder="Nome da casa">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roleta-investimento2">Investimento Casa 2</label>
+                            <input type="number" id="roleta-investimento2" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="roleta-lucro">Lucro</label>
+                            <input type="number" id="roleta-lucro" class="form-control" placeholder="0,00" step="0.01">
+                        </div>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 1:</span>
+                        <span class="result-value" id="roleta-retorno1">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Casa 2:</span>
+                        <span class="result-value" id="roleta-retorno2">0%</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Total:</span>
+                        <span class="result-value" id="roleta-retorno-total">0%</span>
+                    </div>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="btn btn-primary" onclick="calcularRetornoRoleta()">
+                            <i class="fas fa-calculator"></i> Calcular Retorno
+                        </button>
+                        <button class="btn btn-primary" onclick="salvarRoleta()">
+                            <i class="fas fa-save"></i> Salvar Arbitragem
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-list"></i>
+                            Histórico de Roleta
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="result-label">Total Lucros:</div>
+                            <div class="result-value" id="roleta-total-lucros">R$ 0,00</div>
+                        </div>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Casa 1</th>
+                                    <th>Investimento 1</th>
+                                    <th>Casa 2</th>
+                                    <th>Investimento 2</th>
+                                    <th>Lucro</th>
+                                    <th>Retorno</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roleta-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relatórios Section -->
+            <div id="relatorios" class="content-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <i class="fas fa-file-alt"></i>
+                            Relatórios de Arbitragens
+                        </div>
+                    </div>
+                    
+                    <div class="filter-container">
+                        <div class="filter-group">
+                            <label for="relatorio-tipo">Tipo de Arbitragem</label>
+                            <select id="relatorio-tipo" class="form-control">
+                                <option value="todos">Todos</option>
+                                <option value="esportivas">Esportivas</option>
+                                <option value="wingo">Wingo</option>
+                                <option value="roleta">Roleta</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="relatorio-periodo">Período</label>
+                            <select id="relatorio-periodo" class="form-control">
+                                <option value="7">Últimos 7 dias</option>
+                                <option value="30">Últimos 30 dias</option>
+                                <option value="60">Últimos 60 dias</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group" id="custom-date-group" style="display: none;">
+                            <label for="relatorio-data-inicio">Data Início</label>
+                            <input type="date" id="relatorio-data-inicio" class="form-control">
+                        </div>
+                        
+                        <div class="filter-group" id="custom-date-group-end" style="display: none;">
+                            <label for="relatorio-data-fim">Data Fim</label>
+                            <input type="date" id="relatorio-data-fim" class="form-control">
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label>&nbsp;</label>
+                            <button class="btn btn-primary" onclick="gerarRelatorio()">
+                                <i class="fas fa-search"></i> Gerar Relatório
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Total Lucros:</span>
+                        <span class="result-value" id="relatorio-total-lucros">R$ 0,00</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Total Movimentado:</span>
+                        <span class="result-value" id="relatorio-total-movimentado">R$ 0,00</span>
+                    </div>
+                    
+                    <div class="result-row">
+                        <span class="result-label">Retorno Médio:</span>
+                        <span class="result-value" id="relatorio-retorno-medio">0%</span>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Data</th>
+                                    <th>Tipo</th>
+                                    <th>Casa 1</th>
+                                    <th>Investimento 1</th>
+                                    <th>Casa 2</th>
+                                    <th>Investimento 2</th>
+                                    <th>Lucro</th>
+                                    <th>Retorno</th>
+                                </tr>
+                            </thead>
+                            <tbody id="relatorio-table-body">
+                                <tr>
+                                    <td colspan="8" style="text-align: center; padding: 20px;">Selecione os filtros e clique em "Gerar Relatório"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDbzzWPIBh2DA57dknhWnVzi8rqtUxzKuE",
+            authDomain: "imperio-dubai-squad.firebaseapp.com",
+            projectId: "imperio-dubai-squad",
+            storageBucket: "imperio-dubai-squad.firebasestorage.app",
+            messagingSenderId: "572040005382",
+            appId: "1:572040005382:web:c287cdd2b1b8557c244087"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
+
+        // Variável global para o usuário atual
+        let currentUser = null;
+        let arbitragemChart = null;
+
+        // Funções de Autenticação
+        window.loginWithGoogle = function() {
+            signInWithPopup(auth, provider)
+                .then((result) => {
+                    console.log("Login bem-sucedido:", result.user);
+                })
+                .catch((error) => {
+                    console.error("Erro no login:", error);
+                    alert("Erro ao fazer login: " + error.message);
+                });
+        }
+
+        window.logout = function() {
+            signOut(auth)
+                .then(() => {
+                    console.log("Logout bem-sucedido");
+                })
+                .catch((error) => {
+                    console.error("Erro no logout:", error);
+                });
+        }
+
+        // Função para mostrar seções
+        window.showSection = function(sectionId) {
+            // Esconder todas as seções
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Mostrar a seção selecionada
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Atualizar navegação
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            const activeNavItem = Array.from(navItems).find(item => 
+                item.getAttribute('onclick').includes(sectionId)
+            );
+            if (activeNavItem) {
+                activeNavItem.classList.add('active');
+            }
+            
+            // Carregar dados específicos da seção
+            if (sectionId === 'dashboard') {
+                carregarDashboard();
+            } else if (sectionId === 'esportivas') {
+                carregarEsportivas();
+            } else if (sectionId === 'wingo') {
+                carregarWingo();
+            } else if (sectionId === 'roleta') {
+                carregarRoleta();
+            }
+        }
+
+        // Função para inicializar o aplicativo
+        function inicializarApp() {
+            // Configurar datas atuais
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('esportivas-data').value = hoje;
+            document.getElementById('wingo-data').value = hoje;
+            document.getElementById('roleta-data').value = hoje;
+            
+            // Verificar estado de autenticação
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    // Usuário logado
+                    currentUser = user;
+                    document.getElementById('user-info').style.display = 'flex';
+                    document.getElementById('user-name').textContent = user.displayName || user.email;
+                    document.getElementById('login-btn').style.display = 'none';
+                    document.getElementById('logout-btn').style.display = 'block';
+                    document.getElementById('login-required').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'flex';
+                    
+                    // Carregar dashboard
+                    carregarDashboard();
+                } else {
+                    // Usuário não logado
+                    currentUser = null;
+                    document.getElementById('user-info').style.display = 'none';
+                    document.getElementById('login-btn').style.display = 'block';
+                    document.getElementById('logout-btn').style.display = 'none';
+                    document.getElementById('login-required').style.display = 'flex';
+                    document.getElementById('app-container').style.display = 'none';
+                }
+            });
+            
+            // Configurar evento para período personalizado
+            document.getElementById('relatorio-periodo').addEventListener('change', function() {
+                const customDateGroup = document.getElementById('custom-date-group');
+                const customDateGroupEnd = document.getElementById('custom-date-group-end');
+                
+                if (this.value === 'custom') {
+                    customDateGroup.style.display = 'flex';
+                    customDateGroupEnd.style.display = 'flex';
+                } else {
+                    customDateGroup.style.display = 'none';
+                    customDateGroupEnd.style.display = 'none';
+                }
+            });
+        }
+
+        // Função para carregar o dashboard
+        async function carregarDashboard() {
+            try {
+                // Carregar totais
+                const totais = await calcularTotais();
+                
+                document.getElementById('total-esportivas').textContent = `R$ ${totais.esportivas.toFixed(2)}`;
+                document.getElementById('total-wingo').textContent = `R$ ${totais.wingo.toFixed(2)}`;
+                document.getElementById('total-roleta').textContent = `R$ ${totais.roleta.toFixed(2)}`;
+                document.getElementById('total-geral').textContent = `R$ ${totais.total.toFixed(2)}`;
+                document.getElementById('total-movimentado').textContent = `R$ ${totais.movimentado.toFixed(2)}`;
+                
+                // Atualizar gráfico
+                atualizarGrafico(totais);
+            } catch (error) {
+                console.error("Erro ao carregar dashboard:", error);
+            }
+        }
+
+        // Função para calcular totais
+        async function calcularTotais() {
+            const totais = {
+                esportivas: 0,
+                wingo: 0,
+                roleta: 0,
+                total: 0,
+                movimentado: 0
+            };
+            
+            // Buscar esportivas
+            const esportivasSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'esportivas'),
+                orderBy('data', 'desc')
+            ));
+            
+            esportivasSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.esportivas += data.lucro;
+                totais.movimentado += data.investimento1 + data.investimento2;
+            });
+            
+            // Buscar wingo
+            const wingoSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'wingo'),
+                orderBy('data', 'desc')
+            ));
+            
+            wingoSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.wingo += data.lucro;
+                totais.movimentado += data.investimento1 + data.investimento2;
+            });
+            
+            // Buscar roleta
+            const roletaSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'roleta'),
+                orderBy('data', 'desc')
+            ));
+            
+            roletaSnapshot.forEach(doc => {
+                const data = doc.data();
+                totais.roleta += data.lucro;
+                totais.movimentado += data.investimento1 + data.investimento2;
+            });
+            
+            totais.total = totais.esportivas + totais.wingo + totais.roleta;
+            
+            return totais;
+        }
+
+        // Função para atualizar o gráfico
+        function atualizarGrafico(totais) {
+            const ctx = document.getElementById('arbitragem-chart').getContext('2d');
+            
+            if (arbitragemChart) {
+                arbitragemChart.destroy();
+            }
+            
+            arbitragemChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Esportivas', 'Wingo', 'Roleta'],
+                    datasets: [{
+                        data: [totais.esportivas, totais.wingo, totais.roleta],
+                        backgroundColor: [
+                            '#ffd700', // Amarelo para esportivas
+                            '#4caf50', // Verde para wingo
+                            '#f44336'  // Vermelho para roleta
+                        ],
+                        borderColor: [
+                            'rgba(255, 215, 0, 0.5)',
+                            'rgba(76, 175, 80, 0.5)',
+                            'rgba(244, 67, 54, 0.5)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    return `${label}: R$ ${value.toFixed(2)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funções para Esportivas
+        window.calcularRetornoEsportivas = function() {
+            const investimento1 = parseFloat(document.getElementById('esportivas-investimento1').value.replace(',', '.')) || 0;
+            const investimento2 = parseFloat(document.getElementById('esportivas-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('esportivas-lucro').value.replace(',', '.')) || 0;
+            
+            const retorno1 = investimento1 > 0 ? ((lucro / investimento1) * 100) : 0;
+            const retorno2 = investimento2 > 0 ? ((lucro / investimento2) * 100) : 0;
+            const retornoTotal = (investimento1 + investimento2) > 0 ? ((lucro / (investimento1 + investimento2)) * 100) : 0;
+            
+            document.getElementById('esportivas-retorno1').textContent = `${retorno1.toFixed(2)}%`;
+            document.getElementById('esportivas-retorno2').textContent = `${retorno2.toFixed(2)}%`;
+            document.getElementById('esportivas-retorno-total').textContent = `${retornoTotal.toFixed(2)}%`;
+        }
+
+        window.salvarEsportivas = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para salvar arbitragens.");
+                return;
+            }
+            
+            const data = document.getElementById('esportivas-data').value;
+            const casa1 = document.getElementById('esportivas-casa1').value;
+            const investimento1 = parseFloat(document.getElementById('esportivas-investimento1').value.replace(',', '.')) || 0;
+            const casa2 = document.getElementById('esportivas-casa2').value;
+            const investimento2 = parseFloat(document.getElementById('esportivas-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('esportivas-lucro').value.replace(',', '.')) || 0;
+            
+            if (!data || !casa1 || !casa2 || investimento1 <= 0 || investimento2 <= 0) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, 'users', currentUser.uid, 'esportivas'), {
+                    data: data,
+                    casa1: casa1,
+                    investimento1: investimento1,
+                    casa2: casa2,
+                    investimento2: investimento2,
+                    lucro: lucro,
+                    createdAt: serverTimestamp()
+                });
+                
+                // Limpar campos
+                document.getElementById('esportivas-casa1').value = '';
+                document.getElementById('esportivas-investimento1').value = '';
+                document.getElementById('esportivas-casa2').value = '';
+                document.getElementById('esportivas-investimento2').value = '';
+                document.getElementById('esportivas-lucro').value = '';
+                document.getElementById('esportivas-retorno1').textContent = '0%';
+                document.getElementById('esportivas-retorno2').textContent = '0%';
+                document.getElementById('esportivas-retorno-total').textContent = '0%';
+                
+                // Recarregar dados
+                carregarEsportivas();
+                carregarDashboard();
+                
+                alert('Arbitragem salva com sucesso!');
+            } catch (error) {
+                console.error("Erro ao salvar arbitragem:", error);
+                alert("Erro ao salvar arbitragem: " + error.message);
+            }
+        }
+
+        async function carregarEsportivas() {
+            if (!currentUser) return;
+            
+            try {
+                const querySnapshot = await getDocs(query(
+                    collection(db, 'users', currentUser.uid, 'esportivas'),
+                    orderBy('data', 'desc')
+                ));
+                
+                const tableBody = document.getElementById('esportivas-table-body');
+                tableBody.innerHTML = '';
+                
+                let totalLucros = 0;
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td></tr>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="excluirEsportiva('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                document.getElementById('esportivas-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+            } catch (error) {
+                console.error("Erro ao carregar esportivas:", error);
+            }
+        }
+
+        window.excluirEsportiva = async function(id) {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+                try {
+                    await deleteDoc(doc(db, 'users', currentUser.uid, 'esportivas', id));
+                    carregarEsportivas();
+                    carregarDashboard();
+                    alert('Arbitragem excluída com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao excluir arbitragem:", error);
+                    alert("Erro ao excluir arbitragem: " + error.message);
+                }
+            }
+        }
+
+        // Funções para Wingo
+        window.calcularRetornoWingo = function() {
+            const investimento1 = parseFloat(document.getElementById('wingo-investimento1').value.replace(',', '.')) || 0;
+            const investimento2 = parseFloat(document.getElementById('wingo-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('wingo-lucro').value.replace(',', '.')) || 0;
+            
+            const retorno1 = investimento1 > 0 ? ((lucro / investimento1) * 100) : 0;
+            const retorno2 = investimento2 > 0 ? ((lucro / investimento2) * 100) : 0;
+            const retornoTotal = (investimento1 + investimento2) > 0 ? ((lucro / (investimento1 + investimento2)) * 100) : 0;
+            
+            document.getElementById('wingo-retorno1').textContent = `${retorno1.toFixed(2)}%`;
+            document.getElementById('wingo-retorno2').textContent = `${retorno2.toFixed(2)}%`;
+            document.getElementById('wingo-retorno-total').textContent = `${retornoTotal.toFixed(2)}%`;
+        }
+
+        window.salvarWingo = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para salvar arbitragens.");
+                return;
+            }
+            
+            const data = document.getElementById('wingo-data').value;
+            const casa1 = document.getElementById('wingo-casa1').value;
+            const investimento1 = parseFloat(document.getElementById('wingo-investimento1').value.replace(',', '.')) || 0;
+            const casa2 = document.getElementById('wingo-casa2').value;
+            const investimento2 = parseFloat(document.getElementById('wingo-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('wingo-lucro').value.replace(',', '.')) || 0;
+            
+            if (!data || !casa1 || !casa2 || investimento1 <= 0 || investimento2 <= 0) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, 'users', currentUser.uid, 'wingo'), {
+                    data: data,
+                    casa1: casa1,
+                    investimento1: investimento1,
+                    casa2: casa2,
+                    investimento2: investimento2,
+                    lucro: lucro,
+                    createdAt: serverTimestamp()
+                });
+                
+                // Limpar campos
+                document.getElementById('wingo-casa1').value = '';
+                document.getElementById('wingo-investimento1').value = '';
+                document.getElementById('wingo-casa2').value = '';
+                document.getElementById('wingo-investimento2').value = '';
+                document.getElementById('wingo-lucro').value = '';
+                document.getElementById('wingo-retorno1').textContent = '0%';
+                document.getElementById('wingo-retorno2').textContent = '0%';
+                document.getElementById('wingo-retorno-total').textContent = '0%';
+                
+                // Recarregar dados
+                carregarWingo();
+                carregarDashboard();
+                
+                alert('Arbitragem salva com sucesso!');
+            } catch (error) {
+                console.error("Erro ao salvar arbitragem:", error);
+                alert("Erro ao salvar arbitragem: " + error.message);
+            }
+        }
+
+        async function carregarWingo() {
+            if (!currentUser) return;
+            
+            try {
+                const querySnapshot = await getDocs(query(
+                    collection(db, 'users', currentUser.uid, 'wingo'),
+                    orderBy('data', 'desc')
+                ));
+                
+                const tableBody = document.getElementById('wingo-table-body');
+                tableBody.innerHTML = '';
+                
+                let totalLucros = 0;
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td></tr>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="excluirWingo('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                document.getElementById('wingo-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+            } catch (error) {
+                console.error("Erro ao carregar wingo:", error);
+            }
+        }
+
+        window.excluirWingo = async function(id) {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+                try {
+                    await deleteDoc(doc(db, 'users', currentUser.uid, 'wingo', id));
+                    carregarWingo();
+                    carregarDashboard();
+                    alert('Arbitragem excluída com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao excluir arbitragem:", error);
+                    alert("Erro ao excluir arbitragem: " + error.message);
+                }
+            }
+        }
+
+        // Funções para Roleta
+        window.calcularRetornoRoleta = function() {
+            const investimento1 = parseFloat(document.getElementById('roleta-investimento1').value.replace(',', '.')) || 0;
+            const investimento2 = parseFloat(document.getElementById('roleta-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('roleta-lucro').value.replace(',', '.')) || 0;
+            
+            const retorno1 = investimento1 > 0 ? ((lucro / investimento1) * 100) : 0;
+            const retorno2 = investimento2 > 0 ? ((lucro / investimento2) * 100) : 0;
+            const retornoTotal = (investimento1 + investimento2) > 0 ? ((lucro / (investimento1 + investimento2)) * 100) : 0;
+            
+            document.getElementById('roleta-retorno1').textContent = `${retorno1.toFixed(2)}%`;
+            document.getElementById('roleta-retorno2').textContent = `${retorno2.toFixed(2)}%`;
+            document.getElementById('roleta-retorno-total').textContent = `${retornoTotal.toFixed(2)}%`;
+        }
+
+        window.salvarRoleta = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para salvar arbitragens.");
+                return;
+            }
+            
+            const data = document.getElementById('roleta-data').value;
+            const casa1 = document.getElementById('roleta-casa1').value;
+            const investimento1 = parseFloat(document.getElementById('roleta-investimento1').value.replace(',', '.')) || 0;
+            const casa2 = document.getElementById('roleta-casa2').value;
+            const investimento2 = parseFloat(document.getElementById('roleta-investimento2').value.replace(',', '.')) || 0;
+            const lucro = parseFloat(document.getElementById('roleta-lucro').value.replace(',', '.')) || 0;
+            
+            if (!data || !casa1 || !casa2 || investimento1 <= 0 || investimento2 <= 0) {
+                alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+            
+            try {
+                await addDoc(collection(db, 'users', currentUser.uid, 'roleta'), {
+                    data: data,
+                    casa1: casa1,
+                    investimento1: investimento1,
+                    casa2: casa2,
+                    investimento2: investimento2,
+                    lucro: lucro,
+                    createdAt: serverTimestamp()
+                });
+                
+                // Limpar campos
+                document.getElementById('roleta-casa1').value = '';
+                document.getElementById('roleta-investimento1').value = '';
+                document.getElementById('roleta-casa2').value = '';
+                document.getElementById('roleta-investimento2').value = '';
+                document.getElementById('roleta-lucro').value = '';
+                document.getElementById('roleta-retorno1').textContent = '0%';
+                document.getElementById('roleta-retorno2').textContent = '0%';
+                document.getElementById('roleta-retorno-total').textContent = '0%';
+                
+                // Recarregar dados
+                carregarRoleta();
+                carregarDashboard();
+                
+                alert('Arbitragem salva com sucesso!');
+            } catch (error) {
+                console.error("Erro ao salvar arbitragem:", error);
+                alert("Erro ao salvar arbitragem: " + error.message);
+            }
+        }
+
+        async function carregarRoleta() {
+            if (!currentUser) return;
+            
+            try {
+                const querySnapshot = await getDocs(query(
+                    collection(db, 'users', currentUser.uid, 'roleta'),
+                    orderBy('data', 'desc')
+                ));
+                
+                const tableBody = document.getElementById('roleta-table-body');
+                tableBody.innerHTML = '';
+                
+                let totalLucros = 0;
+                
+                if (querySnapshot.empty) {
+                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhuma arbitragem cadastrada</td></tr>';
+                } else {
+                    querySnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                            <td>
+                                <button class="btn btn-danger" onclick="excluirRoleta('${doc.id}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                document.getElementById('roleta-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+            } catch (error) {
+                console.error("Erro ao carregar roleta:", error);
+            }
+        }
+
+        window.excluirRoleta = async function(id) {
+            if (!currentUser) return;
+            
+            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+                try {
+                    await deleteDoc(doc(db, 'users', currentUser.uid, 'roleta', id));
+                    carregarRoleta();
+                    carregarDashboard();
+                    alert('Arbitragem excluída com sucesso!');
+                } catch (error) {
+                    console.error("Erro ao excluir arbitragem:", error);
+                    alert("Erro ao excluir arbitragem: " + error.message);
+                }
+            }
+        }
+
+        // Função para gerar relatório
+        window.gerarRelatorio = async function() {
+            if (!currentUser) {
+                alert("Por favor, faça login para gerar relatórios.");
+                return;
+            }
+            
+            const tipo = document.getElementById('relatorio-tipo').value;
+            const periodo = document.getElementById('relatorio-periodo').value;
+            
+            // Calcular datas de filtro
+            let dataInicio, dataFim;
+            const hoje = new Date();
+            
+            if (periodo === 'custom') {
+                dataInicio = new Date(document.getElementById('relatorio-data-inicio').value);
+                dataFim = new Date(document.getElementById('relatorio-data-fim').value);
+                
+                if (!dataInicio || !dataFim || dataInicio > dataFim) {
+                    alert('Por favor, selecione um período válido.');
+                    return;
+                }
+            } else {
+                dataFim = new Date();
+                dataInicio = new Date();
+                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo));
+            }
+            
+            // Formatar datas para comparação
+            const dataInicioStr = dataInicio.toISOString().split('T')[0];
+            const dataFimStr = dataFim.toISOString().split('T')[0];
+            
+            try {
+                let totalLucros = 0;
+                let totalMovimentado = 0;
+                let totalRetorno = 0;
+                let count = 0;
+                
+                const tableBody = document.getElementById('relatorio-table-body');
+                tableBody.innerHTML = '';
+                
+                // Buscar dados de acordo com o tipo
+                if (tipo === 'todos' || tipo === 'esportivas') {
+                    const esportivasSnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'esportivas'),
+                        where('data', '>=', dataInicioStr),
+                        where('data', '<=', dataFimStr),
+                        orderBy('data', 'desc')
+                    ));
+                    
+                    esportivasSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        totalMovimentado += data.investimento1 + data.investimento2;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        totalRetorno += retornoTotal;
+                        count++;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>Esportivas</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                if (tipo === 'todos' || tipo === 'wingo') {
+                    const wingoSnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'wingo'),
+                        where('data', '>=', dataInicioStr),
+                        where('data', '<=', dataFimStr),
+                        orderBy('data', 'desc')
+                    ));
+                    
+                    wingoSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        totalMovimentado += data.investimento1 + data.investimento2;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        totalRetorno += retornoTotal;
+                        count++;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>Wingo</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                if (tipo === 'todos' || tipo === 'roleta') {
+                    const roletaSnapshot = await getDocs(query(
+                        collection(db, 'users', currentUser.uid, 'roleta'),
+                        where('data', '>=', dataInicioStr),
+                        where('data', '<=', dataFimStr),
+                        orderBy('data', 'desc')
+                    ));
+                    
+                    roletaSnapshot.forEach(doc => {
+                        const data = doc.data();
+                        totalLucros += data.lucro;
+                        totalMovimentado += data.investimento1 + data.investimento2;
+                        
+                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                        totalRetorno += retornoTotal;
+                        count++;
+                        
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>Roleta</td>
+                            <td>${data.casa1}</td>
+                            <td>R$ ${data.investimento1.toFixed(2)}</td>
+                            <td>${data.casa2}</td>
+                            <td>R$ ${data.investimento2.toFixed(2)}</td>
+                            <td class="${data.lucro >= 0 ? 'profit' : 'loss'}">R$ ${data.lucro.toFixed(2)}</td>
+                            <td>${retornoTotal.toFixed(2)}%</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                
+                if (tableBody.innerHTML === '') {
+                    tableBody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 20px;">Nenhum dado encontrado para o período selecionado</td></tr>';
+                }
+                
+                // Atualizar totais
+                document.getElementById('relatorio-total-lucros').textContent = `R$ ${totalLucros.toFixed(2)}`;
+                document.getElementById('relatorio-total-movimentado').textContent = `R$ ${totalMovimentado.toFixed(2)}`;
+                document.getElementById('relatorio-retorno-medio').textContent = count > 0 ? `${(totalRetorno / count).toFixed(2)}%` : '0%';
+            } catch (error) {
+                console.error("Erro ao gerar relatório:", error);
+                alert("Erro ao gerar relatório: " + error.message);
+            }
+        }
+
+        // Inicializar quando a página carregar
+        window.onload = function() {
+            inicializarApp();
+        };
+    </script>
+</body>
+</html>
