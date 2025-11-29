@@ -254,6 +254,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            overflow: visible;
         }
 
         .overview-card:hover {
@@ -283,10 +284,11 @@
             font-weight: 700;
             margin-bottom: 8px;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
             line-height: 1.2;
+            overflow: visible;
+            text-overflow: unset;
+            display: inline-block;
+            max-width: 100%;
         }
 
         .overview-label {
@@ -567,6 +569,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            overflow: visible;
         }
 
         .receita-card:hover {
@@ -586,10 +589,11 @@
             margin-bottom: 15px;
             color: #ffd700;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
             line-height: 1.2;
+            overflow: visible;
+            text-overflow: unset;
+            display: inline-block;
+            max-width: 100%;
         }
 
         .receita-label {
@@ -666,10 +670,11 @@
             font-weight: 700;
             color: #4caf50;
             white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
             line-height: 1.2;
+            overflow: visible;
+            text-overflow: unset;
+            display: inline-block;
+            max-width: 100%;
         }
 
         .roi-display {
@@ -683,30 +688,36 @@
 
         /* Classes dinâmicas para ajuste de tamanho de fonte */
         .texto-muito-grande {
-            font-size: 2rem !important;
+            font-size: 1.8rem !important;
         }
         .texto-grande {
-            font-size: 2.5rem !important;
+            font-size: 2.2rem !important;
         }
         .texto-medio {
-            font-size: 2.8rem !important;
+            font-size: 2.6rem !important;
+        }
+        .texto-normal {
+            font-size: 3rem !important;
         }
         
         @media (max-width: 1200px) {
             .texto-muito-grande {
-                font-size: 1.7rem !important;
+                font-size: 1.6rem !important;
             }
             .texto-grande {
                 font-size: 2rem !important;
             }
             .texto-medio {
-                font-size: 2.3rem !important;
+                font-size: 2.4rem !important;
+            }
+            .texto-normal {
+                font-size: 2.8rem !important;
             }
             .receita-value {
-                font-size: 2.5rem;
+                font-size: 2.8rem;
             }
             .overview-value {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             .investment-value {
                 font-size: 1.8rem;
@@ -715,19 +726,22 @@
         
         @media (max-width: 992px) {
             .texto-muito-grande {
-                font-size: 1.5rem !important;
+                font-size: 1.4rem !important;
             }
             .texto-grande {
-                font-size: 1.7rem !important;
+                font-size: 1.8rem !important;
             }
             .texto-medio {
-                font-size: 2rem !important;
+                font-size: 2.2rem !important;
+            }
+            .texto-normal {
+                font-size: 2.6rem !important;
             }
             .receita-value {
-                font-size: 2.2rem;
+                font-size: 2.6rem;
             }
             .overview-value {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
             .investment-value {
                 font-size: 1.6rem;
@@ -736,19 +750,22 @@
         
         @media (max-width: 768px) {
             .texto-muito-grande {
-                font-size: 1.3rem !important;
+                font-size: 1.2rem !important;
             }
             .texto-grande {
-                font-size: 1.5rem !important;
+                font-size: 1.6rem !important;
             }
             .texto-medio {
-                font-size: 1.7rem !important;
+                font-size: 2rem !important;
+            }
+            .texto-normal {
+                font-size: 2.4rem !important;
             }
             .receita-value {
-                font-size: 1.8rem;
+                font-size: 2.4rem;
             }
             .overview-value {
-                font-size: 1.5rem;
+                font-size: 1.8rem;
             }
             .investment-value {
                 font-size: 1.4rem;
@@ -757,19 +774,22 @@
         
         @media (max-width: 576px) {
             .texto-muito-grande {
-                font-size: 1.1rem !important;
+                font-size: 1rem !important;
             }
             .texto-grande {
-                font-size: 1.3rem !important;
+                font-size: 1.4rem !important;
             }
             .texto-medio {
-                font-size: 1.5rem !important;
+                font-size: 1.8rem !important;
+            }
+            .texto-normal {
+                font-size: 2.2rem !important;
             }
             .receita-value {
-                font-size: 1.5rem;
+                font-size: 2.2rem;
             }
             .overview-value {
-                font-size: 1.3rem;
+                font-size: 1.6rem;
             }
             .investment-value {
                 font-size: 1.2rem;
@@ -1567,7 +1587,7 @@
                 const comprimento = texto.length;
                 
                 // Remover classes de tamanho existentes
-                elemento.classList.remove('texto-muito-grande', 'texto-grande', 'texto-medio');
+                elemento.classList.remove('texto-muito-grande', 'texto-grande', 'texto-medio', 'texto-normal');
                 
                 // Adicionar classe com base no comprimento
                 if (comprimento > 15) {
@@ -1576,6 +1596,8 @@
                     elemento.classList.add('texto-grande');
                 } else if (comprimento > 9) {
                     elemento.classList.add('texto-medio');
+                } else {
+                    elemento.classList.add('texto-normal');
                 }
             });
         }
