@@ -28,6 +28,7 @@
             text-align: center;
             border-bottom: 2px solid rgba(255, 215, 0, 0.3);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            position: relative;
         }
 
         .brand-container {
@@ -35,6 +36,8 @@
             flex-direction: column;
             align-items: center;
             gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         .brand-icon {
@@ -132,10 +135,11 @@
         .container {
             display: flex;
             flex: 1;
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
             gap: 30px;
+            width: 100%;
         }
 
         .sidebar {
@@ -579,9 +583,27 @@
             margin-top: 25px;
         }
 
-        @media (max-width: 1200px) {
+        .warning-message {
+            background: rgba(255, 152, 0, 0.2);
+            border: 1px solid rgba(255, 152, 0, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #ff9800;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        @media (max-width: 1400px) {
             .container {
                 max-width: 1200px;
+            }
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                max-width: 100%;
+                padding: 15px;
             }
             
             .dashboard-overview-top {
@@ -600,7 +622,6 @@
         @media (max-width: 1024px) {
             .container {
                 flex-direction: column;
-                max-width: 100%;
             }
             
             .sidebar {
@@ -740,7 +761,7 @@
                             <div class="overview-icon sports">
                                 <i class="fas fa-futbol"></i>
                             </div>
-                            <div class="overview-value" id="total-esportivas">R$ 120.00</div>
+                            <div class="overview-value" id="total-esportivas">R$ 0,00</div>
                             <div class="overview-label">Lucro Esportivas</div>
                         </div>
                         
@@ -748,7 +769,7 @@
                             <div class="overview-icon wingo">
                                 <i class="fas fa-dice"></i>
                             </div>
-                            <div class="overview-value" id="total-wingo">R$ 0.00</div>
+                            <div class="overview-value" id="total-wingo">R$ 0,00</div>
                             <div class="overview-label">Lucro Wingo</div>
                         </div>
                         
@@ -756,7 +777,7 @@
                             <div class="overview-icon roulette">
                                 <i class="fas fa-circle-notch"></i>
                             </div>
-                            <div class="overview-value" id="total-roleta">R$ 120.00</div>
+                            <div class="overview-value" id="total-roleta">R$ 0,00</div>
                             <div class="overview-label">Lucro Roleta</div>
                         </div>
                     </div>
@@ -767,7 +788,7 @@
                             <div class="overview-icon">
                                 <i class="fas fa-wallet"></i>
                             </div>
-                            <div class="overview-value" id="total-geral">R$ 2000.00</div>
+                            <div class="overview-value" id="total-geral">R$ 0,00</div>
                             <div class="overview-label">Lucro Total</div>
                         </div>
                         
@@ -775,7 +796,7 @@
                             <div class="overview-icon">
                                 <i class="fas fa-exchange-alt"></i>
                             </div>
-                            <div class="overview-value" id="total-movimentado">R$ 0.00</div>
+                            <div class="overview-value" id="total-movimentado">R$ 0,00</div>
                             <div class="overview-label">Total Movimentado</div>
                         </div>
                     </div>
@@ -1148,6 +1169,11 @@
                 </div>
                 
                 <div class="card">
+                    <div class="warning-message">
+                        <i class="fas fa-info-circle"></i> 
+                        Esta aba mostra o lucro e movimentação geral desde o início. Os valores são calculados em tempo real com base em todos os registros salvos.
+                    </div>
+                    
                     <!-- 2 cards lado a lado -->
                     <div class="receita-overview">
                         <div class="receita-card">
@@ -1664,7 +1690,7 @@
         window.excluirEsportiva = async function(id) {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+            if (confirm('Tem certeza que deseja excluir esta arbitragem? Esta ação removerá o registro permanentemente de todos os cálculos e relatórios.')) {
                 try {
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'esportivas', id));
                     carregarEsportivas();
@@ -1681,7 +1707,7 @@
         window.apagarEsportivas = async function() {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja apagar todas as arbitragens de esportivas do mês atual?')) {
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de esportivas do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
                     
@@ -1829,7 +1855,7 @@
         window.excluirWingo = async function(id) {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+            if (confirm('Tem certeza que deseja excluir esta arbitragem? Esta ação removerá o registro permanentemente de todos os cálculos e relatórios.')) {
                 try {
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'wingo', id));
                     carregarWingo();
@@ -1846,7 +1872,7 @@
         window.apagarWingo = async function() {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja apagar todas as arbitragens de wingo do mês atual?')) {
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de wingo do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
                     
@@ -1994,7 +2020,7 @@
         window.excluirRoleta = async function(id) {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja excluir esta arbitragem?')) {
+            if (confirm('Tem certeza que deseja excluir esta arbitragem? Esta ação removerá o registro permanentemente de todos os cálculos e relatórios.')) {
                 try {
                     await deleteDoc(doc(db, 'users', currentUser.uid, 'roleta', id));
                     carregarRoleta();
@@ -2011,7 +2037,7 @@
         window.apagarRoleta = async function() {
             if (!currentUser) return;
             
-            if (confirm('Tem certeza que deseja apagar todas as arbitragens de roleta do mês atual?')) {
+            if (confirm('Tem certeza que deseja apagar todas as arbitragens de roleta do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
                     
@@ -2098,10 +2124,10 @@
         }
 
         window.zerarReceita = function() {
-            if (confirm('Tem certeza que deseja zerar a contagem de receita? Esta ação não apagará os dados históricos, apenas reiniciará a contagem a partir de agora.')) {
-                alert('Contagem de receita zerada com sucesso! A partir de agora, a receita será calculada a partir deste ponto.');
+            if (confirm('ATENÇÃO: Esta ação NÃO apaga os dados do Firebase. Ela apenas reinicia a contagem visual na aba Receita. Todos os seus registros históricos continuarão disponíveis nos relatórios. Deseja continuar?')) {
+                alert('Contagem de receita zerada com sucesso! Lembre-se que todos os seus dados históricos continuam salvos no sistema.');
                 // Em uma implementação real, aqui você criaria um marcador de "reset" no banco de dados
-                // Para simplificar, apenas mostramos um alerta
+                // Para simplificar, apenas mostramos um alerta mais detalhado
             }
         }
 
