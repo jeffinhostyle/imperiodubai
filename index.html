@@ -223,9 +223,17 @@
             gap: 12px;
         }
 
-        .dashboard-overview {
+        /* Layout do Dashboard - 3 cards em cima, 2 embaixo */
+        .dashboard-overview-top {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-overview-bottom {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 25px;
             margin-bottom: 40px;
         }
@@ -517,9 +525,10 @@
             font-size: 1rem;
         }
 
+        /* Layout da Receita - 2 cards lado a lado */
         .receita-overview {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 30px;
             margin-bottom: 40px;
         }
@@ -575,7 +584,11 @@
                 max-width: 1200px;
             }
             
-            .dashboard-overview {
+            .dashboard-overview-top {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+            
+            .dashboard-overview-bottom {
                 grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             }
             
@@ -600,7 +613,8 @@
                 order: 1;
             }
             
-            .dashboard-overview {
+            .dashboard-overview-top,
+            .dashboard-overview-bottom {
                 grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             }
             
@@ -624,7 +638,8 @@
                 grid-template-columns: 1fr;
             }
             
-            .dashboard-overview {
+            .dashboard-overview-top,
+            .dashboard-overview-bottom {
                 grid-template-columns: 1fr;
             }
             
@@ -719,12 +734,13 @@
                 </div>
                 
                 <div class="card">
-                    <div class="dashboard-overview">
+                    <!-- Primeira linha com 3 cards -->
+                    <div class="dashboard-overview-top">
                         <div class="overview-card">
                             <div class="overview-icon sports">
                                 <i class="fas fa-futbol"></i>
                             </div>
-                            <div class="overview-value" id="total-esportivas">R$ 0,00</div>
+                            <div class="overview-value" id="total-esportivas">R$ 120.00</div>
                             <div class="overview-label">Lucro Esportivas</div>
                         </div>
                         
@@ -732,7 +748,7 @@
                             <div class="overview-icon wingo">
                                 <i class="fas fa-dice"></i>
                             </div>
-                            <div class="overview-value" id="total-wingo">R$ 0,00</div>
+                            <div class="overview-value" id="total-wingo">R$ 0.00</div>
                             <div class="overview-label">Lucro Wingo</div>
                         </div>
                         
@@ -740,15 +756,18 @@
                             <div class="overview-icon roulette">
                                 <i class="fas fa-circle-notch"></i>
                             </div>
-                            <div class="overview-value" id="total-roleta">R$ 0,00</div>
+                            <div class="overview-value" id="total-roleta">R$ 120.00</div>
                             <div class="overview-label">Lucro Roleta</div>
                         </div>
-                        
+                    </div>
+                    
+                    <!-- Segunda linha com 2 cards -->
+                    <div class="dashboard-overview-bottom">
                         <div class="overview-card">
                             <div class="overview-icon">
                                 <i class="fas fa-wallet"></i>
                             </div>
-                            <div class="overview-value" id="total-geral">R$ 0,00</div>
+                            <div class="overview-value" id="total-geral">R$ 2000.00</div>
                             <div class="overview-label">Lucro Total</div>
                         </div>
                         
@@ -756,11 +775,12 @@
                             <div class="overview-icon">
                                 <i class="fas fa-exchange-alt"></i>
                             </div>
-                            <div class="overview-value" id="total-movimentado">R$ 0,00</div>
+                            <div class="overview-value" id="total-movimentado">R$ 0.00</div>
                             <div class="overview-label">Total Movimentado</div>
                         </div>
                     </div>
                     
+                    <!-- Gráfico centralizado abaixo -->
                     <div class="chart-container">
                         <canvas id="arbitragem-chart"></canvas>
                     </div>
@@ -1128,6 +1148,7 @@
                 </div>
                 
                 <div class="card">
+                    <!-- 2 cards lado a lado -->
                     <div class="receita-overview">
                         <div class="receita-card">
                             <div class="receita-icon">
