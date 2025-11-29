@@ -282,6 +282,11 @@
             font-size: 2.4rem;
             font-weight: 700;
             margin-bottom: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            line-height: 1.2;
         }
 
         .overview-label {
@@ -561,6 +566,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center;
         }
 
         .receita-card:hover {
@@ -579,8 +585,9 @@
             font-weight: 700;
             margin-bottom: 15px;
             color: #ffd700;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             max-width: 100%;
             line-height: 1.2;
         }
@@ -658,6 +665,11 @@
             font-size: 2rem;
             font-weight: 700;
             color: #4caf50;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            line-height: 1.2;
         }
 
         .roi-display {
@@ -667,6 +679,101 @@
             padding: 10px 20px;
             color: #4caf50;
             font-weight: 600;
+        }
+
+        /* Classes dinâmicas para ajuste de tamanho de fonte */
+        .texto-muito-grande {
+            font-size: 2rem !important;
+        }
+        .texto-grande {
+            font-size: 2.5rem !important;
+        }
+        .texto-medio {
+            font-size: 2.8rem !important;
+        }
+        
+        @media (max-width: 1200px) {
+            .texto-muito-grande {
+                font-size: 1.7rem !important;
+            }
+            .texto-grande {
+                font-size: 2rem !important;
+            }
+            .texto-medio {
+                font-size: 2.3rem !important;
+            }
+            .receita-value {
+                font-size: 2.5rem;
+            }
+            .overview-value {
+                font-size: 2rem;
+            }
+            .investment-value {
+                font-size: 1.8rem;
+            }
+        }
+        
+        @media (max-width: 992px) {
+            .texto-muito-grande {
+                font-size: 1.5rem !important;
+            }
+            .texto-grande {
+                font-size: 1.7rem !important;
+            }
+            .texto-medio {
+                font-size: 2rem !important;
+            }
+            .receita-value {
+                font-size: 2.2rem;
+            }
+            .overview-value {
+                font-size: 1.8rem;
+            }
+            .investment-value {
+                font-size: 1.6rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .texto-muito-grande {
+                font-size: 1.3rem !important;
+            }
+            .texto-grande {
+                font-size: 1.5rem !important;
+            }
+            .texto-medio {
+                font-size: 1.7rem !important;
+            }
+            .receita-value {
+                font-size: 1.8rem;
+            }
+            .overview-value {
+                font-size: 1.5rem;
+            }
+            .investment-value {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .texto-muito-grande {
+                font-size: 1.1rem !important;
+            }
+            .texto-grande {
+                font-size: 1.3rem !important;
+            }
+            .texto-medio {
+                font-size: 1.5rem !important;
+            }
+            .receita-value {
+                font-size: 1.5rem;
+            }
+            .overview-value {
+                font-size: 1.3rem;
+            }
+            .investment-value {
+                font-size: 1.2rem;
+            }
         }
 
         @media (max-width: 1400px) {
@@ -754,10 +861,6 @@
             
             .action-buttons {
                 flex-direction: column;
-            }
-            
-            .receita-value {
-                font-size: 2.2rem;
             }
         }
     </style>
@@ -1455,6 +1558,37 @@
             }).format(valor);
         }
 
+        // Função para ajustar o tamanho da fonte com base no comprimento do valor
+        function ajustarTamanhoFonteValor() {
+            const valores = document.querySelectorAll('.receita-value, .overview-value, .investment-value');
+            
+            valores.forEach(elemento => {
+                const texto = elemento.textContent;
+                const comprimento = texto.length;
+                
+                // Remover classes de tamanho existentes
+                elemento.classList.remove('texto-muito-grande', 'texto-grande', 'texto-medio');
+                
+                // Adicionar classe com base no comprimento
+                if (comprimento > 15) {
+                    elemento.classList.add('texto-muito-grande');
+                } else if (comprimento > 12) {
+                    elemento.classList.add('texto-grande');
+                } else if (comprimento > 9) {
+                    elemento.classList.add('texto-medio');
+                }
+            });
+        }
+
+        // Função para atualizar um elemento com valor monetário e ajustar o tamanho
+        function atualizarValorMonetario(elementId, valor) {
+            const elemento = document.getElementById(elementId);
+            if (elemento) {
+                elemento.textContent = formatarMoeda(valor);
+                ajustarTamanhoFonteValor();
+            }
+        }
+
         // Funções de Autenticação
         window.loginWithGoogle = function() {
             signInWithPopup(auth, provider)
@@ -1531,6 +1665,9 @@
             document.getElementById('wingo-month').textContent = mesAtual;
             document.getElementById('roleta-month').textContent = mesAtual;
             
+            // Ajustar tamanho da fonte dos valores iniciais
+            ajustarTamanhoFonteValor();
+            
             // Verificar estado de autenticação
             onAuthStateChanged(auth, (user) => {
                 if (user) {
@@ -1583,11 +1720,11 @@
                 // Carregar totais do mês atual
                 const totais = await calcularTotaisMesAtual();
                 
-                document.getElementById('total-esportivas').textContent = formatarMoeda(totais.esportivas);
-                document.getElementById('total-wingo').textContent = formatarMoeda(totais.wingo);
-                document.getElementById('total-roleta').textContent = formatarMoeda(totais.roleta);
-                document.getElementById('total-geral').textContent = formatarMoeda(totais.total);
-                document.getElementById('total-movimentado').textContent = formatarMoeda(totais.movimentado);
+                atualizarValorMonetario('total-esportivas', totais.esportivas);
+                atualizarValorMonetario('total-wingo', totais.wingo);
+                atualizarValorMonetario('total-roleta', totais.roleta);
+                atualizarValorMonetario('total-geral', totais.total);
+                atualizarValorMonetario('total-movimentado', totais.movimentado);
                 
                 // Atualizar gráfico
                 atualizarGrafico(totais);
@@ -1819,7 +1956,7 @@
                     });
                 }
                 
-                document.getElementById('esportivas-total-lucros').textContent = formatarMoeda(totalLucros);
+                atualizarValorMonetario('esportivas-total-lucros', totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar esportivas:", error);
             }
@@ -1984,7 +2121,7 @@
                     });
                 }
                 
-                document.getElementById('wingo-total-lucros').textContent = formatarMoeda(totalLucros);
+                atualizarValorMonetario('wingo-total-lucros', totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar wingo:", error);
             }
@@ -2149,7 +2286,7 @@
                     });
                 }
                 
-                document.getElementById('roleta-total-lucros').textContent = formatarMoeda(totalLucros);
+                atualizarValorMonetario('roleta-total-lucros', totalLucros);
             } catch (error) {
                 console.error("Erro ao carregar roleta:", error);
             }
@@ -2264,7 +2401,7 @@
                     investimentoValor = investimentoDoc.data().valor;
                 }
                 
-                document.getElementById('investimento-atual').textContent = formatarMoeda(investimentoValor);
+                atualizarValorMonetario('investimento-atual', investimentoValor);
                 
                 // Calcular ROI
                 const totais = await calcularTotaisGerais();
@@ -2283,8 +2420,8 @@
             try {
                 const totais = await calcularTotaisGerais();
                 
-                document.getElementById('receita-total-lucro').textContent = formatarMoeda(totais.totalLucro);
-                document.getElementById('receita-total-movimentado').textContent = formatarMoeda(totais.totalMovimentado);
+                atualizarValorMonetario('receita-total-lucro', totais.totalLucro);
+                atualizarValorMonetario('receita-total-movimentado', totais.totalMovimentado);
                 
                 // Calcular saldo total (investimento + lucro)
                 const investimentoRef = doc(db, 'users', currentUser.uid, 'investimento', 'principal');
@@ -2296,7 +2433,7 @@
                 }
                 
                 const saldoTotal = investimentoValor + totais.totalLucro;
-                document.getElementById('receita-saldo-total').textContent = formatarMoeda(saldoTotal);
+                atualizarValorMonetario('receita-saldo-total', saldoTotal);
                 
             } catch (error) {
                 console.error("Erro ao carregar receita:", error);
@@ -2528,8 +2665,8 @@
                 }
                 
                 // Atualizar totais
-                document.getElementById('relatorio-total-lucros').textContent = formatarMoeda(totalLucros);
-                document.getElementById('relatorio-total-movimentado').textContent = formatarMoeda(totalMovimentado);
+                atualizarValorMonetario('relatorio-total-lucros', totalLucros);
+                atualizarValorMonetario('relatorio-total-movimentado', totalMovimentado);
                 document.getElementById('relatorio-retorno-medio').textContent = count > 0 ? `${(totalRetorno / count).toFixed(2)}%` : '0%';
             } catch (error) {
                 console.error("Erro ao gerar relatório:", error);
