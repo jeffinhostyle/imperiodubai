@@ -1578,6 +1578,22 @@
             }).format(valor);
         }
 
+        // Função para obter data local no formato YYYY-MM-DD
+        function getLocalDateString(date = new Date()) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Função para obter o primeiro dia do mês atual no formato YYYY-MM-DD
+        function getPrimeiroDiaMesAtual() {
+            const data = new Date();
+            const year = data.getFullYear();
+            const month = String(data.getMonth() + 1).padStart(2, '0');
+            return `${year}-${month}-01`;
+        }
+
         // Função para ajustar o tamanho da fonte com base no comprimento do valor
         function ajustarTamanhoFonteValor() {
             const valores = document.querySelectorAll('.receita-value, .overview-value, .investment-value');
@@ -1674,8 +1690,8 @@
 
         // Função para inicializar o aplicativo
         function inicializarApp() {
-            // Configurar datas atuais
-            const hoje = new Date().toISOString().split('T')[0];
+            // Configurar datas atuais usando fuso horário local
+            const hoje = getLocalDateString();
             document.getElementById('esportivas-data').value = hoje;
             document.getElementById('wingo-data').value = hoje;
             document.getElementById('roleta-data').value = hoje;
@@ -1728,12 +1744,6 @@
                     customDateGroupEnd.style.display = 'none';
                 }
             });
-        }
-
-        // Função para obter o primeiro dia do mês atual
-        function getPrimeiroDiaMesAtual() {
-            const data = new Date();
-            return new Date(data.getFullYear(), data.getMonth(), 1).toISOString().split('T')[0];
         }
 
         // Função para carregar o dashboard
@@ -2570,8 +2580,8 @@
             }
             
             // Formatar datas para comparação
-            const dataInicioStr = dataInicio.toISOString().split('T')[0];
-            const dataFimStr = dataFim.toISOString().split('T')[0];
+            const dataInicioStr = getLocalDateString(dataInicio);
+            const dataFimStr = getLocalDateString(dataFim);
             
             try {
                 let totalLucros = 0;
