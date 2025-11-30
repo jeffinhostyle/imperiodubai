@@ -1035,7 +1035,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="esportivas-data">Data</label>
-                            <input type="date" id="esportivas-data" class="form-control">
+                            <input type="date" id="esportivas-data" class="form-control" max="">
                         </div>
                         
                         <div class="form-group">
@@ -1152,7 +1152,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="wingo-data">Data</label>
-                            <input type="date" id="wingo-data" class="form-control">
+                            <input type="date" id="wingo-data" class="form-control" max="">
                         </div>
                         
                         <div class="form-group">
@@ -1269,7 +1269,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="roleta-data">Data</label>
-                            <input type="date" id="roleta-data" class="form-control">
+                            <input type="date" id="roleta-data" class="form-control" max="">
                         </div>
                         
                         <div class="form-group">
@@ -1602,6 +1602,17 @@
             return `${year}-${month}-01`;
         }
 
+        // Função para validar se a data é válida (não futura)
+        function validarData(dataString) {
+            if (!dataString) return false;
+            
+            const data = new Date(dataString);
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0); // Zerar horas para comparação correta
+            
+            return data <= hoje;
+        }
+
         // Função para ajustar o tamanho da fonte com base no comprimento do valor
         function ajustarTamanhoFonteValor() {
             const valores = document.querySelectorAll('.receita-value, .overview-value, .investment-value');
@@ -1703,6 +1714,11 @@
             document.getElementById('esportivas-data').value = hoje;
             document.getElementById('wingo-data').value = hoje;
             document.getElementById('roleta-data').value = hoje;
+            
+            // Configurar limite máximo para datas (hoje)
+            document.getElementById('esportivas-data').setAttribute('max', hoje);
+            document.getElementById('wingo-data').setAttribute('max', hoje);
+            document.getElementById('roleta-data').setAttribute('max', hoje);
             
             // Configurar indicador de mês atual
             const mesAtual = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' });
@@ -1917,6 +1933,12 @@
                 return;
             }
             
+            // Validar data
+            if (!validarData(data)) {
+                alert('Por favor, selecione uma data válida (não pode ser uma data futura).');
+                return;
+            }
+            
             try {
                 await addDoc(collection(db, 'users', currentUser.uid, 'esportivas'), {
                     data: data,
@@ -2082,6 +2104,12 @@
                 return;
             }
             
+            // Validar data
+            if (!validarData(data)) {
+                alert('Por favor, selecione uma data válida (não pode ser uma data futura).');
+                return;
+            }
+            
             try {
                 await addDoc(collection(db, 'users', currentUser.uid, 'wingo'), {
                     data: data,
@@ -2244,6 +2272,12 @@
             
             if (!data || !casa1 || !casa2 || investimento1 <= 0 || investimento2 <= 0) {
                 alert('Por favor, preencha todos os campos corretamente.');
+                return;
+            }
+            
+            // Validar data
+            if (!validarData(data)) {
+                alert('Por favor, selecione uma data válida (não pode ser uma data futura).');
                 return;
             }
             
