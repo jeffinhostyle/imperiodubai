@@ -1578,6 +1578,14 @@
             }).format(valor);
         }
 
+        // Função para formatar data no formato DD/MM/YYYY
+        function formatarData(dataString) {
+            if (!dataString) return '';
+            const partes = dataString.split('-');
+            if (partes.length !== 3) return dataString;
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+
         // Função para obter data local no formato YYYY-MM-DD
         function getLocalDateString(date = new Date()) {
             const year = date.getFullYear();
@@ -1971,7 +1979,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
@@ -2136,7 +2144,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
@@ -2301,7 +2309,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
                             <td>${data.casa2}</td>
@@ -2613,7 +2621,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>Esportivas</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
@@ -2646,7 +2654,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>Wingo</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
@@ -2679,7 +2687,7 @@
                         
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${new Date(data.data).toLocaleDateString('pt-BR')}</td>
+                            <td>${formatarData(data.data)}</td>
                             <td>Roleta</td>
                             <td>${data.casa1}</td>
                             <td>${formatarMoeda(data.investimento1)}</td>
