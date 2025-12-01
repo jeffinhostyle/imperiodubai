@@ -227,10 +227,10 @@
             gap: 12px;
         }
 
-        /* Layout do Dashboard - 3 cards em cima, 2 embaixo */
+        /* Layout do Dashboard - 4 cards em cima, 2 embaixo */
         .dashboard-overview-top {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(4, 1fr);
             gap: 25px;
             margin-bottom: 25px;
         }
@@ -277,6 +277,10 @@
 
         .overview-icon.roulette {
             color: #f44336;
+        }
+
+        .overview-icon.today {
+            color: #2196f3;
         }
 
         .overview-value {
@@ -961,7 +965,7 @@
                 </div>
                 
                 <div class="card">
-                    <!-- Primeira linha com 3 cards -->
+                    <!-- Primeira linha com 4 cards -->
                     <div class="dashboard-overview-top">
                         <div class="overview-card">
                             <div class="overview-icon sports">
@@ -985,6 +989,14 @@
                             </div>
                             <div class="overview-value" id="total-roleta">R$ 0,00</div>
                             <div class="overview-label">Lucro Roleta</div>
+                        </div>
+                        
+                        <div class="overview-card">
+                            <div class="overview-icon today">
+                                <i class="fas fa-calendar-day"></i>
+                            </div>
+                            <div class="overview-value" id="total-hoje">R$ 0,00</div>
+                            <div class="overview-label">Hoje</div>
                         </div>
                     </div>
                     
@@ -1782,6 +1794,10 @@
                 atualizarValorMonetario('total-geral', totais.total);
                 atualizarValorMonetario('total-movimentado', totais.movimentado);
                 
+                // Carregar totais do dia atual
+                const totaisHoje = await calcularTotaisDiaAtual();
+                atualizarValorMonetario('total-hoje', totaisHoje);
+                
                 // Atualizar gráfico
                 atualizarGrafico(totais);
             } catch (error) {
@@ -1843,6 +1859,47 @@
             totais.total = totais.esportivas + totais.wingo + totais.roleta;
             
             return totais;
+        }
+
+        // Função para calcular totais do dia atual
+        async function calcularTotaisDiaAtual() {
+            const hoje = getLocalDateString();
+            let totalHoje = 0;
+            
+            // Buscar esportivas do dia atual
+            const esportivasSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'esportivas'),
+                where('data', '==', hoje)
+            ));
+            
+            esportivasSnapshot.forEach(doc => {
+                const data = doc.data();
+                totalHoje += data.lucro;
+            });
+            
+            // Buscar wingo do dia atual
+            const wingoSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'wingo'),
+                where('data', '==', hoje)
+            ));
+            
+            wingoSnapshot.forEach(doc => {
+                const data = doc.data();
+                totalHoje += data.lucro;
+            });
+            
+            // Buscar roleta do dia atual
+            const roletaSnapshot = await getDocs(query(
+                collection(db, 'users', currentUser.uid, 'roleta'),
+                where('data', '==', hoje)
+            ));
+            
+            roletaSnapshot.forEach(doc => {
+                const data = doc.data();
+                totalHoje += data.lucro;
+            });
+            
+            return totalHoje;
         }
 
         // Função para atualizar o gráfico
