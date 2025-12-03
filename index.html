@@ -227,10 +227,17 @@
             gap: 12px;
         }
 
-        /* Layout do Dashboard - 5 cards em cima, 2 embaixo */
+        /* Layout do Dashboard - 3 cards em cima, 2 no meio, 2 embaixo */
         .dashboard-overview-top {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .dashboard-overview-middle {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 25px;
             margin-bottom: 25px;
         }
@@ -285,6 +292,14 @@
 
         .overview-icon.today {
             color: #2196f3;
+        }
+
+        .overview-icon.total {
+            color: #ff9800;
+        }
+
+        .overview-icon.movimentado {
+            color: #00bcd4;
         }
 
         .overview-value {
@@ -913,6 +928,12 @@
             .container {
                 max-width: 1200px;
             }
+            
+            .dashboard-overview-top,
+            .dashboard-overview-middle,
+            .dashboard-overview-bottom {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
         }
 
         @media (max-width: 1200px) {
@@ -921,12 +942,10 @@
                 padding: 15px;
             }
             
-            .dashboard-overview-top {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            }
-            
+            .dashboard-overview-top,
+            .dashboard-overview-middle,
             .dashboard-overview-bottom {
-                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
             }
             
             .receita-overview {
@@ -949,12 +968,10 @@
                 order: 1;
             }
             
-            .dashboard-overview-top {
-                grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            }
-            
+            .dashboard-overview-top,
+            .dashboard-overview-middle,
             .dashboard-overview-bottom {
-                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
             
             .receita-overview {
@@ -978,6 +995,7 @@
             }
             
             .dashboard-overview-top,
+            .dashboard-overview-middle,
             .dashboard-overview-bottom {
                 grid-template-columns: 1fr;
             }
@@ -1081,7 +1099,7 @@
                 </div>
                 
                 <div class="card">
-                    <!-- Primeira linha com 5 cards (4 categorias + Hoje) -->
+                    <!-- Primeira linha: 3 cards principais -->
                     <div class="dashboard-overview-top">
                         <div class="overview-card">
                             <div class="overview-icon sports">
@@ -1106,7 +1124,10 @@
                             <div class="overview-value" id="total-roleta">R$ 0,00</div>
                             <div class="overview-label">Lucro Roleta</div>
                         </div>
-                        
+                    </div>
+                    
+                    <!-- Segunda linha: 2 cards do meio -->
+                    <div class="dashboard-overview-middle">
                         <div class="overview-card">
                             <div class="overview-icon minigames">
                                 <i class="fas fa-gamepad"></i>
@@ -1124,10 +1145,10 @@
                         </div>
                     </div>
                     
-                    <!-- Segunda linha com 2 cards -->
+                    <!-- Terceira linha: 2 cards finais -->
                     <div class="dashboard-overview-bottom">
                         <div class="overview-card">
-                            <div class="overview-icon">
+                            <div class="overview-icon total">
                                 <i class="fas fa-wallet"></i>
                             </div>
                             <div class="overview-value" id="total-geral">R$ 0,00</div>
@@ -1135,7 +1156,7 @@
                         </div>
                         
                         <div class="overview-card">
-                            <div class="overview-icon">
+                            <div class="overview-icon movimentado">
                                 <i class="fas fa-exchange-alt"></i>
                             </div>
                             <div class="overview-value" id="total-movimentado">R$ 0,00</div>
@@ -2093,7 +2114,7 @@
                 const totaisHoje = await calcularTotaisDiaAtual();
                 atualizarValorMonetario('total-hoje', totaisHoje);
                 
-                // Atualizar gráfico (sem o valor de "Hoje")
+                // Atualizar gráfico
                 atualizarGrafico(totais);
             } catch (error) {
                 console.error("Erro ao carregar dashboard:", error);
@@ -2279,7 +2300,7 @@
             });
         }
 
-        // Funções para Esportivas (já existentes - mantidas sem alterações)
+        // Funções para Esportivas
         window.calcularRetornoEsportivas = function() {
             const investimento1 = parseFloat(document.getElementById('esportivas-investimento1').value.replace(',', '.')) || 0;
             const investimento2 = parseFloat(document.getElementById('esportivas-investimento2').value.replace(',', '.')) || 0;
@@ -2450,7 +2471,7 @@
             }
         }
 
-        // Funções para Wingo (já existentes - mantidas sem alterações)
+        // Funções para Wingo
         window.calcularRetornoWingo = function() {
             const investimento1 = parseFloat(document.getElementById('wingo-investimento1').value.replace(',', '.')) || 0;
             const investimento2 = parseFloat(document.getElementById('wingo-investimento2').value.replace(',', '.')) || 0;
@@ -2621,7 +2642,7 @@
             }
         }
 
-        // Funções para Roleta (já existentes - mantidas sem alterações)
+        // Funções para Roleta
         window.calcularRetornoRoleta = function() {
             const investimento1 = parseFloat(document.getElementById('roleta-investimento1').value.replace(',', '.')) || 0;
             const investimento2 = parseFloat(document.getElementById('roleta-investimento2').value.replace(',', '.')) || 0;
@@ -2963,7 +2984,7 @@
             }
         }
 
-        // Funções para Investimento (já existentes - mantidas sem alterações)
+        // Funções para Investimento
         window.salvarInvestimento = async function() {
             if (!currentUser) {
                 alert("Por favor, faça login para salvar o investimento.");
@@ -3037,7 +3058,7 @@
             }
         }
 
-        // Funções para Receita (já existentes - mantidas sem alterações)
+        // Funções para Receita
         async function carregarReceita() {
             if (!currentUser) return;
             
