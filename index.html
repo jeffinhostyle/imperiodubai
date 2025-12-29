@@ -3176,7 +3176,7 @@
             }
         }
 
-        // FUNÇÕES MELHORADAS PARA RELATÓRIOS COM PAGINAÇÃO
+        // FUNÇÕES CORRIGIDAS PARA RELATÓRIOS COM PAGINAÇÃO
         window.gerarRelatorio = async function() {
             if (!currentUser) {
                 alert("Por favor, faça login para gerar relatórios.");
@@ -3191,17 +3191,28 @@
             const hoje = new Date();
             
             if (periodo === 'custom') {
-                dataInicio = new Date(document.getElementById('relatorio-data-inicio').value);
-                dataFim = new Date(document.getElementById('relatorio-data-fim').value);
+                const dataInicioInput = document.getElementById('relatorio-data-inicio').value;
+                const dataFimInput = document.getElementById('relatorio-data-fim').value;
                 
-                if (!dataInicio || !dataFim || dataInicio > dataFim) {
-                    alert('Por favor, selecione um período válido.');
+                if (!dataInicioInput || !dataFimInput) {
+                    alert('Por favor, selecione ambas as datas para o período personalizado.');
+                    return;
+                }
+                
+                dataInicio = new Date(dataInicioInput);
+                dataFim = new Date(dataFimInput);
+                
+                if (dataInicio > dataFim) {
+                    alert('A data de início não pode ser maior que a data de fim.');
                     return;
                 }
             } else {
+                // CORREÇÃO AQUI: Ajustar para incluir o dia completo
+                // Data fim é hoje (inclui o dia de hoje)
                 dataFim = new Date();
+                // Data início é X dias atrás (inclui o dia inicial)
                 dataInicio = new Date();
-                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo));
+                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo) + 1);
             }
             
             // Formatar datas para comparação
