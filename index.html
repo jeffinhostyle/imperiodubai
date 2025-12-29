@@ -3207,17 +3207,34 @@
                     return;
                 }
             } else {
-                // CORREÇÃO AQUI: Ajustar para incluir o dia completo
+                // CORREÇÃO: Para períodos pré-definidos, vamos calcular corretamente
                 // Data fim é hoje (inclui o dia de hoje)
                 dataFim = new Date();
-                // Data início é X dias atrás (inclui o dia inicial)
+                
+                // Data início é X dias atrás (incluindo o dia inicial)
                 dataInicio = new Date();
-                dataInicio.setDate(dataInicio.getDate() - parseInt(periodo) + 1);
+                const dias = parseInt(periodo);
+                
+                // Se queremos "Últimos 30 dias", isso inclui 30 dias completos
+                // Se hoje é 28/12, "Últimos 30 dias" vai de 29/11 a 28/12 (30 dias)
+                // A fórmula é: dataInicio = hoje - (dias - 1)
+                dataInicio.setDate(dataInicio.getDate() - dias + 1);
+                
+                // Ajustar para meia-noite do dia inicial
+                dataInicio.setHours(0, 0, 0, 0);
             }
             
-            // Formatar datas para comparação
+            // Formatar datas para comparação (YYYY-MM-DD)
             const dataInicioStr = getLocalDateString(dataInicio);
             const dataFimStr = getLocalDateString(dataFim);
+            
+            // Para debug: mostrar as datas que estão sendo usadas
+            console.log("Filtro de datas:", {
+                dataInicio: dataInicioStr,
+                dataFim: dataFimStr,
+                periodoSelecionado: periodo,
+                dias: parseInt(periodo) || 'custom'
+            });
             
             try {
                 let totalLucros = 0;
