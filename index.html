@@ -1935,6 +1935,14 @@
             return data <= hoje;
         }
 
+        // Função auxiliar para formatar datas para filtro
+        function formatarDataParaFiltro(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
         // Função para ajustar o tamanho da fonte com base no comprimento do valor
         function ajustarTamanhoFonteValor() {
             const valores = document.querySelectorAll('.receita-value, .overview-value, .investment-value');
@@ -2065,6 +2073,14 @@
                 if (this.value === 'custom') {
                     customDateGroup.style.display = 'flex';
                     customDateGroupEnd.style.display = 'flex';
+                    
+                    // Preencher datas padrão
+                    const hojeObj = new Date();
+                    const umaSemanaAtras = new Date();
+                    umaSemanaAtras.setDate(hojeObj.getDate() - 7);
+                    
+                    document.getElementById('relatorio-data-inicio').value = formatarDataParaFiltro(umaSemanaAtras);
+                    document.getElementById('relatorio-data-fim').value = formatarDataParaFiltro(hojeObj);
                 } else {
                     customDateGroup.style.display = 'none';
                     customDateGroupEnd.style.display = 'none';
@@ -2133,11 +2149,13 @@
             };
             
             const primeiroDiaMes = getPrimeiroDiaMesAtual();
+            const hoje = getLocalDateString();
             
             // Buscar esportivas do mês atual
             const esportivasSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'esportivas'),
                 where('data', '>=', primeiroDiaMes),
+                where('data', '<=', hoje),
                 orderBy('data', 'desc')
             ));
             
@@ -2151,6 +2169,7 @@
             const wingoSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'wingo'),
                 where('data', '>=', primeiroDiaMes),
+                where('data', '<=', hoje),
                 orderBy('data', 'desc')
             ));
             
@@ -2164,6 +2183,7 @@
             const roletaSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'roleta'),
                 where('data', '>=', primeiroDiaMes),
+                where('data', '<=', hoje),
                 orderBy('data', 'desc')
             ));
             
@@ -2177,6 +2197,7 @@
             const minigamesSnapshot = await getDocs(query(
                 collection(db, 'users', currentUser.uid, 'minigames'),
                 where('data', '>=', primeiroDiaMes),
+                where('data', '<=', hoje),
                 orderBy('data', 'desc')
             ));
             
@@ -2377,10 +2398,12 @@
             
             try {
                 const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                const hoje = getLocalDateString();
                 
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'esportivas'),
                     where('data', '>=', primeiroDiaMes),
+                    where('data', '<=', hoje),
                     orderBy('data', 'desc')
                 ));
                 
@@ -2447,10 +2470,12 @@
             if (confirm('Tem certeza que deseja apagar todas as arbitragens de esportivas do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    const hoje = getLocalDateString();
                     
                     const querySnapshot = await getDocs(query(
                         collection(db, 'users', currentUser.uid, 'esportivas'),
-                        where('data', '>=', primeiroDiaMes)
+                        where('data', '>=', primeiroDiaMes),
+                        where('data', '<=', hoje)
                     ));
                     
                     const batch = [];
@@ -2548,10 +2573,12 @@
             
             try {
                 const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                const hoje = getLocalDateString();
                 
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'wingo'),
                     where('data', '>=', primeiroDiaMes),
+                    where('data', '<=', hoje),
                     orderBy('data', 'desc')
                 ));
                 
@@ -2618,10 +2645,12 @@
             if (confirm('Tem certeza que deseja apagar todas as arbitragens de wingo do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    const hoje = getLocalDateString();
                     
                     const querySnapshot = await getDocs(query(
                         collection(db, 'users', currentUser.uid, 'wingo'),
-                        where('data', '>=', primeiroDiaMes)
+                        where('data', '>=', primeiroDiaMes),
+                        where('data', '<=', hoje)
                     ));
                     
                     const batch = [];
@@ -2719,10 +2748,12 @@
             
             try {
                 const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                const hoje = getLocalDateString();
                 
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'roleta'),
                     where('data', '>=', primeiroDiaMes),
+                    where('data', '<=', hoje),
                     orderBy('data', 'desc')
                 ));
                 
@@ -2789,10 +2820,12 @@
             if (confirm('Tem certeza que deseja apagar todas as arbitragens de roleta do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    const hoje = getLocalDateString();
                     
                     const querySnapshot = await getDocs(query(
                         collection(db, 'users', currentUser.uid, 'roleta'),
-                        where('data', '>=', primeiroDiaMes)
+                        where('data', '>=', primeiroDiaMes),
+                        where('data', '<=', hoje)
                     ));
                     
                     const batch = [];
@@ -2813,7 +2846,7 @@
             }
         }
 
-        // NOVAS FUNÇÕES PARA MINI JOGOS
+        // Funções para Mini Jogos
         window.calcularRetornoMinigames = function() {
             const investimento1 = parseFloat(document.getElementById('minigames-investimento1').value.replace(',', '.')) || 0;
             const investimento2 = parseFloat(document.getElementById('minigames-investimento2').value.replace(',', '.')) || 0;
@@ -2890,10 +2923,12 @@
             
             try {
                 const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                const hoje = getLocalDateString();
                 
                 const querySnapshot = await getDocs(query(
                     collection(db, 'users', currentUser.uid, 'minigames'),
                     where('data', '>=', primeiroDiaMes),
+                    where('data', '<=', hoje),
                     orderBy('data', 'desc')
                 ));
                 
@@ -2960,10 +2995,12 @@
             if (confirm('Tem certeza que deseja apagar todas as arbitragens de mini jogos do mês atual? Esta ação removerá todos os registros permanentemente.')) {
                 try {
                     const primeiroDiaMes = getPrimeiroDiaMesAtual();
+                    const hoje = getLocalDateString();
                     
                     const querySnapshot = await getDocs(query(
                         collection(db, 'users', currentUser.uid, 'minigames'),
-                        where('data', '>=', primeiroDiaMes)
+                        where('data', '>=', primeiroDiaMes),
+                        where('data', '<=', hoje)
                     ));
                     
                     const batch = [];
@@ -3176,7 +3213,7 @@
             }
         }
 
-        // FUNÇÕES CORRIGIDAS PARA RELATÓRIOS COM PAGINAÇÃO
+        // FUNÇÃO CORRIGIDA PARA GERAR RELATÓRIOS
         window.gerarRelatorio = async function() {
             if (!currentUser) {
                 alert("Por favor, faça login para gerar relatórios.");
@@ -3186,9 +3223,8 @@
             const tipo = document.getElementById('relatorio-tipo').value;
             const periodo = document.getElementById('relatorio-periodo').value;
             
-            // Calcular datas de filtro
+            // CORREÇÃO: Criar datas com início e fim do dia LOCAL
             let dataInicio, dataFim;
-            const hoje = new Date();
             
             if (periodo === 'custom') {
                 const dataInicioInput = document.getElementById('relatorio-data-inicio').value;
@@ -3199,41 +3235,42 @@
                     return;
                 }
                 
+                // CORREÇÃO: Criar datas no início do dia (00:00:00)
                 dataInicio = new Date(dataInicioInput);
+                dataInicio.setHours(0, 0, 0, 0);
+                
+                // CORREÇÃO: Criar data no final do dia (23:59:59.999)
                 dataFim = new Date(dataFimInput);
+                dataFim.setHours(23, 59, 59, 999);
                 
                 if (dataInicio > dataFim) {
                     alert('A data de início não pode ser maior que a data de fim.');
                     return;
                 }
             } else {
-                // CORREÇÃO: Para períodos pré-definidos, vamos calcular corretamente
-                // Data fim é hoje (inclui o dia de hoje)
-                dataFim = new Date();
-                
-                // Data início é X dias atrás (incluindo o dia inicial)
-                dataInicio = new Date();
+                // Para períodos pré-definidos
                 const dias = parseInt(periodo);
                 
-                // Se queremos "Últimos 30 dias", isso inclui 30 dias completos
-                // Se hoje é 28/12, "Últimos 30 dias" vai de 29/11 a 28/12 (30 dias)
-                // A fórmula é: dataInicio = hoje - (dias - 1)
-                dataInicio.setDate(dataInicio.getDate() - dias + 1);
+                // Data fim: hoje no final do dia
+                dataFim = new Date();
+                dataFim.setHours(23, 59, 59, 999);
                 
-                // Ajustar para meia-noite do dia inicial
+                // Data início: X dias atrás no início do dia
+                dataInicio = new Date();
+                dataInicio.setDate(dataInicio.getDate() - dias + 1); // +1 para incluir o dia atual
                 dataInicio.setHours(0, 0, 0, 0);
             }
             
-            // Formatar datas para comparação (YYYY-MM-DD)
-            const dataInicioStr = getLocalDateString(dataInicio);
-            const dataFimStr = getLocalDateString(dataFim);
+            // Formatar datas como strings no formato YYYY-MM-DD para filtragem correta
+            const dataInicioStr = formatarDataParaFiltro(dataInicio);
+            const dataFimStr = formatarDataParaFiltro(dataFim);
             
-            // Para debug: mostrar as datas que estão sendo usadas
-            console.log("Filtro de datas:", {
+            console.log("Filtro de datas corrigido:", {
                 dataInicio: dataInicioStr,
                 dataFim: dataFimStr,
                 periodoSelecionado: periodo,
-                dias: parseInt(periodo) || 'custom'
+                dataInicioObjeto: dataInicio.toLocaleDateString('pt-BR'),
+                dataFimObjeto: dataFim.toLocaleDateString('pt-BR')
             });
             
             try {
@@ -3254,130 +3291,99 @@
                 document.getElementById('pagination-container').style.display = 'none';
                 document.getElementById('period-summary').style.display = 'none';
                 
-                // Buscar dados de acordo com o tipo
+                // CORREÇÃO: Buscar dados do Firestore com filtros otimizados
+                const promises = [];
+                
                 if (tipo === 'todos' || tipo === 'esportivas') {
-                    const esportivasSnapshot = await getDocs(query(
-                        collection(db, 'users', currentUser.uid, 'esportivas'),
-                        where('data', '>=', dataInicioStr),
-                        where('data', '<=', dataFimStr),
-                        orderBy('data', 'desc')
-                    ));
-                    
-                    esportivasSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
-                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
-                        
-                        totalLucros += data.lucro;
-                        totalMovimentado += data.investimento1 + data.investimento2;
-                        totalRetorno += retornoTotal;
-                        count++;
-                        
-                        currentReportData.push({
+                    promises.push(
+                        getDocs(query(
+                            collection(db, 'users', currentUser.uid, 'esportivas'),
+                            where('data', '>=', dataInicioStr),
+                            where('data', '<=', dataFimStr),
+                            orderBy('data', 'desc')
+                        )).then(snapshot => ({
                             tipo: 'Esportivas',
-                            data: data.data,
-                            casa1: data.casa1,
-                            investimento1: data.investimento1,
-                            casa2: data.casa2,
-                            investimento2: data.investimento2,
-                            lucro: data.lucro,
-                            retorno: retornoTotal
-                        });
-                    });
+                            snapshot
+                        }))
+                    );
                 }
                 
                 if (tipo === 'todos' || tipo === 'wingo') {
-                    const wingoSnapshot = await getDocs(query(
-                        collection(db, 'users', currentUser.uid, 'wingo'),
-                        where('data', '>=', dataInicioStr),
-                        where('data', '<=', dataFimStr),
-                        orderBy('data', 'desc')
-                    ));
-                    
-                    wingoSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
-                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
-                        
-                        totalLucros += data.lucro;
-                        totalMovimentado += data.investimento1 + data.investimento2;
-                        totalRetorno += retornoTotal;
-                        count++;
-                        
-                        currentReportData.push({
+                    promises.push(
+                        getDocs(query(
+                            collection(db, 'users', currentUser.uid, 'wingo'),
+                            where('data', '>=', dataInicioStr),
+                            where('data', '<=', dataFimStr),
+                            orderBy('data', 'desc')
+                        )).then(snapshot => ({
                             tipo: 'Wingo',
-                            data: data.data,
-                            casa1: data.casa1,
-                            investimento1: data.investimento1,
-                            casa2: data.casa2,
-                            investimento2: data.investimento2,
-                            lucro: data.lucro,
-                            retorno: retornoTotal
-                        });
-                    });
+                            snapshot
+                        }))
+                    );
                 }
                 
                 if (tipo === 'todos' || tipo === 'roleta') {
-                    const roletaSnapshot = await getDocs(query(
-                        collection(db, 'users', currentUser.uid, 'roleta'),
-                        where('data', '>=', dataInicioStr),
-                        where('data', '<=', dataFimStr),
-                        orderBy('data', 'desc')
-                    ));
-                    
-                    roletaSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
-                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
-                        
-                        totalLucros += data.lucro;
-                        totalMovimentado += data.investimento1 + data.investimento2;
-                        totalRetorno += retornoTotal;
-                        count++;
-                        
-                        currentReportData.push({
+                    promises.push(
+                        getDocs(query(
+                            collection(db, 'users', currentUser.uid, 'roleta'),
+                            where('data', '>=', dataInicioStr),
+                            where('data', '<=', dataFimStr),
+                            orderBy('data', 'desc')
+                        )).then(snapshot => ({
                             tipo: 'Roleta',
-                            data: data.data,
-                            casa1: data.casa1,
-                            investimento1: data.investimento1,
-                            casa2: data.casa2,
-                            investimento2: data.investimento2,
-                            lucro: data.lucro,
-                            retorno: retornoTotal
-                        });
-                    });
+                            snapshot
+                        }))
+                    );
                 }
                 
                 if (tipo === 'todos' || tipo === 'minigames') {
-                    const minigamesSnapshot = await getDocs(query(
-                        collection(db, 'users', currentUser.uid, 'minigames'),
-                        where('data', '>=', dataInicioStr),
-                        where('data', '<=', dataFimStr),
-                        orderBy('data', 'desc')
-                    ));
-                    
-                    minigamesSnapshot.forEach(doc => {
-                        const data = doc.data();
-                        const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
-                            ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
-                        
-                        totalLucros += data.lucro;
-                        totalMovimentado += data.investimento1 + data.investimento2;
-                        totalRetorno += retornoTotal;
-                        count++;
-                        
-                        currentReportData.push({
+                    promises.push(
+                        getDocs(query(
+                            collection(db, 'users', currentUser.uid, 'minigames'),
+                            where('data', '>=', dataInicioStr),
+                            where('data', '<=', dataFimStr),
+                            orderBy('data', 'desc')
+                        )).then(snapshot => ({
                             tipo: 'Mini Jogos',
-                            data: data.data,
-                            casa1: data.casa1,
-                            investimento1: data.investimento1,
-                            casa2: data.casa2,
-                            investimento2: data.investimento2,
-                            lucro: data.lucro,
-                            retorno: retornoTotal
-                        });
-                    });
+                            snapshot
+                        }))
+                    );
                 }
+                
+                // Aguardar todas as promises
+                const results = await Promise.all(promises);
+                
+                // Processar resultados
+                results.forEach(result => {
+                    result.snapshot.forEach(doc => {
+                        const data = doc.data();
+                        
+                        // Verificar se a data está realmente no intervalo
+                        const itemDate = new Date(data.data + 'T00:00:00');
+                        
+                        if (itemDate >= dataInicio && itemDate <= dataFim) {
+                            const retornoTotal = (data.investimento1 + data.investimento2) > 0 ? 
+                                ((data.lucro / (data.investimento1 + data.investimento2)) * 100) : 0;
+                            
+                            totalLucros += data.lucro;
+                            totalMovimentado += data.investimento1 + data.investimento2;
+                            totalRetorno += retornoTotal;
+                            count++;
+                            
+                            currentReportData.push({
+                                tipo: result.tipo,
+                                data: data.data,
+                                casa1: data.casa1,
+                                investimento1: data.investimento1,
+                                casa2: data.casa2,
+                                investimento2: data.investimento2,
+                                lucro: data.lucro,
+                                retorno: retornoTotal,
+                                documentoId: doc.id
+                            });
+                        }
+                    });
+                });
                 
                 // Ordenar dados por data (mais recente primeiro)
                 currentReportData.sort((a, b) => {
@@ -3409,7 +3415,14 @@
                 
             } catch (error) {
                 console.error("Erro ao gerar relatório:", error);
-                alert("Erro ao gerar relatório: " + error.message);
+                
+                // Verificar se é erro de índice
+                if (error.code === 'failed-precondition') {
+                    alert("AVISO: Para consultas por período, é necessário criar índices no Firestore. \n\nSiga estes passos: \n1. Clique no link que apareceu no console do navegador (F12) \n2. Ou acesse: https://console.firebase.google.com/project/imperio-dubai-squad/database/firestore/indexes \n3. Clique em 'Criar Índice' para cada coleção \n4. Os índices serão criados automaticamente");
+                    console.log("Erro de índice detectado. O usuário precisa criar índices no Firestore.");
+                } else {
+                    alert("Erro ao gerar relatório: " + error.message);
+                }
             }
         }
 
